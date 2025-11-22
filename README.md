@@ -1,6 +1,6 @@
 # rfmtbcmp - Reformat Bandcamp Files
 
-[![Build and test](https://github.com/samcunliffe/rfmtbcmp/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/rfmtbcmp/actions/workflows/build-and-test.yml)
+[![Build and test](https://github.com/samcunliffe/rfmtbcmp/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/rfmtbcmp/actions/workflows/build-and-test.yml) [![codecov](https://codecov.io/gh/samcunliffe/rfmtbcmp/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/rfmtbcmp)
 
 This is a Go command-line utility for extracting and reformatting music files purchased and downloaded from Bandcamp.
 

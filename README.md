@@ -1,8 +1,8 @@
-# rfmtbcmp - Reformat Bandcamp Files
+# bcmptidy - Tidy Bandcamp Files
 
-[![Build and test](https://github.com/samcunliffe/rfmtbcmp/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/rfmtbcmp/actions/workflows/build-and-test.yml) [![codecov](https://codecov.io/gh/samcunliffe/rfmtbcmp/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/rfmtbcmp)
+[![Build and test](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml) [![codecov](https://codecov.io/gh/samcunliffe/bcmptidy/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/bcmptidy)
 
-This is a Go command-line utility for extracting and reformatting music files purchased and downloaded from [Bandcamp](https://bandcamp.com).
+This is a Go command-line utility for extracting, renaming, and organising music files purchased and downloaded from [Bandcamp](https://bandcamp.com).
 
 <p align="center">
   <img src="assets/bandcamp-logo-gopher.svg" alt="Gopher wearing a bandcamp tshirt" />
@@ -29,6 +29,14 @@ Album Artist - Album Name - 01 First Track Name.flac
 Album Artist - Album Name - 02 Second Track Name.flac
 ...
 ```
+
+## References
+
+As this was a learning exercise, here are the things I used:
+- [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests)
+- [Go By Example](https://gobyexample.com/)
+- [Official Go Docs](https://go.dev/doc)
+
 
 ## Reuse
 

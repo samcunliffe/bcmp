@@ -23,5 +23,5 @@ func main() {
 	// outputDirectory := fmt.Sprintf("%s/%s/%s", MUSICLIBRARYPATH, album.Artist, album.Title)
 	// mkdir(outputDirectory)
 	// zip.Extract(input)
-	fmt.Println("Hello, %s", album.Artist)
+	fmt.Printf("Hello, %s\n", album.Artist)
 }

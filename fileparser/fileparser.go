@@ -16,7 +16,7 @@ func ParseZipFileName(name string) (map[string]string, error) {
 	if !strings.Contains(name, " - ") {
 		return nil, fmt.Errorf("filename does not contain ' - ' separator")
 	}
-	nameAndAlbum := strings.Split(name, " - ")
+	nameAndAlbum := strings.SplitN(name, " - ", 2)
 	return map[string]string{"artist": nameAndAlbum[0], "album": nameAndAlbum[1]}, nil
 }
 

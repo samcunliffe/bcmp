@@ -45,7 +45,7 @@ func TestParseZipFileNameErrors(t *testing.T) {
 	for _, filename := range errorTestCases {
 		_, err := ParseZipFileName(filename)
 		if err == nil {
-			t.Errorf("ParseZipArchiveFileName(%q) expected error but got nil", filename)
+			t.Errorf("ParseZipFileName(%q) expected error but got nil", filename)
 		}
 	}
 }

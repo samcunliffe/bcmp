@@ -4,11 +4,9 @@
 
 This is a Go command-line utility for extracting and reformatting music files purchased and downloaded from [Bandcamp](https://bandcamp.com).
 
-<center>
-
-![Gopher wearing a Bandcamp tshirt](assets/bandcamp-logo-gopher.svg)
-
-</center>
+<p align="center">
+  <img src="assets/bandcamp-logo-gopher.svg" alt="Gopher wearing a bandcamp tshirt" />
+</p>
 
 It's mostly a little utility project for @samcunliffe to learn Go, it's very opinionated in the way the files are formatted. If you like your music files named in some other way it's probably not supported. (Sorry!)
 

@@ -15,7 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Println("Input file: %s", input[0])
-	album, err := fileparser.ParseZipFileName(input[1])
+	album, err := fileparser.ParseZipFileName(input[0])
 	if err != nil {
 		os.Exit(1)
 	}

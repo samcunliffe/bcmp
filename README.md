@@ -9,6 +9,7 @@ This is a Go command-line utility for extracting, renaming, and organising music
 </p>
 
 It's a little weekend project for [@samcunliffe](https://github.com/samcunliffe) to learn Go, it's very opinionated in the way the files are formatted. If you like your music files named and/or arranged in some other way it's probably not supported. (Sorry!)
+If you're looking for a good example of idiomatic Golang code, you'll probably be disappointed: I'm learning. (Sorry!)
 
 I used GitHub Copilot for autocompletion and for PR review. But I do not use LLMs for generation of any substantial parts of the code. That would defeat the purpose.
 

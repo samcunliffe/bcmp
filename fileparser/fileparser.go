@@ -65,7 +65,7 @@ func ParseMusicFileName(name string) (datamodel.Track, error) {
 	if !strings.Contains(name, " - ") {
 		return datamodel.Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
-	if !(strings.Count(name, " - ") == 2) {
+	if strings.Count(name, " - ") != 2 {
 		fmt.Printf("expected two ' - ' separators: '%s'", name)
 	}
 

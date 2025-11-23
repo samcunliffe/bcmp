@@ -8,7 +8,7 @@ This is a Go command-line utility for extracting, renaming, and organising music
   <img src="assets/bandcamp-logo-gopher.svg" alt="Gopher wearing a bandcamp tshirt" />
 </p>
 
-It's mostly a little utility project for @samcunliffe to learn Go, it's very opinionated in the way the files are formatted. If you like your music files named in some other way it's probably not supported. (Sorry!)
+It's a little weekend project for [@samcunliffe](https://github.com/samcunliffe) to learn Go, it's very opinionated in the way the files are formatted. If you like your music files named and/or arranged in some other way it's probably not supported. (Sorry!)
 
 I used GitHub Copilot for autocompletion and for PR review. But I do not use LLMs for generation of any substantial parts of the code. That would defeat the purpose.
 
@@ -19,24 +19,46 @@ Music from Bandcamp is downloaded either as individual music files or as a zip a
 ### Zip archive
 
 Of the format:
+
 ```
 Album Artist - Album Name.zip
 ```
 
 Containing files of the format:
+
 ```
 Album Artist - Album Name - 01 First Track Name.flac
 Album Artist - Album Name - 02 Second Track Name.flac
 ...
 ```
 
+### Destination
+
+Files will be extracted and organised into a directory structure:
+
+```
+$HOME/Music/Album Artist/Album Name/01 First Track Name.flac
+```
+
+Or:
+
+```
+.
+├── Album Artist
+│   └── Album Name
+│       ├── 01 First Track.flac
+│       ├── 02 Second Track.flac
+│       └── ...
+└── Another Artist
+```
+
 ## References
 
 As this was a learning exercise, here are the things I used:
+
 - [Learn Go with Tests](https://quii.gitbook.io/learn-go-with-tests)
 - [Go By Example](https://gobyexample.com/)
 - [Official Go Docs](https://go.dev/doc)
-
 
 ## Reuse
 

@@ -54,7 +54,7 @@ func ParseZipFileName(name string) (datamodel.Album, error) {
 }
 
 func ParseMusicFileName(name string) (datamodel.Track, error) {
-	// Trim valid music file suffixes error if none found
+	// Trim valid music file suffixes; error if none found
 	hadValidSuffix := false
 	for _, suffix := range validMusicFiles {
 		if strings.HasSuffix(name, suffix) {

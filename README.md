@@ -46,9 +46,9 @@ Or:
 .
 ├── Album Artist
 │   └── Album Name
-|       ├── 01 First Track.flac
+│       ├── 01 First Track.flac
 │       ├── 02 Second Track.flac
-|       └── ...
+│       └── ...
 └── Another Artist
 ```
 

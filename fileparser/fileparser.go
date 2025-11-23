@@ -9,6 +9,8 @@ import (
 	"github.com/samcunliffe/bcmptidy/datamodel"
 )
 
+var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
+
 func splitOnHyphen(s string) (string, string) {
 	ss := strings.SplitN(s, " - ", 2)
 	return ss[0], ss[1]
@@ -52,14 +54,18 @@ func ParseZipFileName(name string) (datamodel.Album, error) {
 }
 
 func ParseMusicFileName(name string) (datamodel.Track, error) {
-	// TODO make this extensible and ideally hasSuffix for suffix in VALID SUFFIXES
-	if !(strings.HasSuffix(name, ".flac") || strings.HasSuffix(name, ".mp3") || strings.HasSuffix(name, ".ogg")) {
+	// Trim valid music file suffixes error if none found
+	hadValidSuffix := false
+	for _, suffix := range validMusicFiles {
+		if strings.HasSuffix(name, suffix) {
+			name = strings.TrimSuffix(name, suffix)
+			hadValidSuffix = true
+			break
+		}
+	}
+	if !hadValidSuffix {
 		return datamodel.Track{}, fmt.Errorf("filename does not have a valid music file suffix")
 	}
-	// Trim the file extension
-	name = strings.TrimSuffix(name, ".flac")
-	name = strings.TrimSuffix(name, ".mp3")
-	name = strings.TrimSuffix(name, ".ogg")
 
 	// Should be two hyphens 'Artist - Album - XX Title'
 	if !strings.Contains(name, " - ") {

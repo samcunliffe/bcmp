@@ -24,7 +24,7 @@ func TestExtractNumberPrefix(t *testing.T) {
 	}
 }
 
-func TestParseMusicFilename(t *testing.T) {
+func TestParseMusicFileName(t *testing.T) {
 	var testCases = []struct {
 		input_filename string
 		want_number    int
@@ -43,6 +43,21 @@ func TestParseMusicFilename(t *testing.T) {
 		if got.Number != testcase.want_number || got.Title != testcase.want_title || got.FullTrack != testcase.want_track {
 			t.Errorf("ParseMusicFileName(%q) = number: %d, title: %q, fulltrack: %q; want number: %d, title: %q, fulltrack: %q",
 				testcase.input_filename, got.Number, got.Title, got.FullTrack, testcase.want_number, testcase.want_title, testcase.want_track)
+		}
+	}
+}
+
+func TestParseMusicFilenameErrors(t *testing.T) {
+	var errorCases = []string{
+		"Crypta - Shades of Sorrow - The Aftermath.flac",          // Missing track number
+		"Crypta - Shades of Sorrow - 01 The Aftermath.txt",        // Invalid file extension
+		"Crypta - Shades of Sorrow - 01 The Aftermath",            // No file extension
+		"Crypta - Shades of Sorrow - Track One The Aftermath.mp3", // Non-numeric track number
+	}
+	for _, filename := range errorCases {
+		_, err := ParseMusicFileName(filename)
+		if err == nil {
+			t.Errorf("ParseMusicFileName(%q) expected to return error, but got nil", filename)
 		}
 	}
 }

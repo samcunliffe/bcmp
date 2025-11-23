@@ -24,7 +24,7 @@ then you'll have `bcmptidy` in your path.
 
 ## Usage
 
-Run `bcmptidy` without any arguyments, or with `-h,--help` to get usage information:
+Run `bcmptidy` without any arguments, or with `-h,--help` to get usage information:
 
 ```sh
 bcmptidy --help

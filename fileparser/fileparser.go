@@ -61,7 +61,7 @@ func ParseMusicFileName(name string) (datamodel.Track, error) {
 	name = strings.TrimSuffix(name, ".mp3")
 	name = strings.TrimSuffix(name, ".ogg")
 
-	// Should be two hyphens 'Album - Artist - XX Title'
+	// Should be two hyphens 'Artist - Album - XX Title'
 	if !strings.Contains(name, " - ") {
 		return datamodel.Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}

@@ -7,6 +7,7 @@ type Album struct {
 }
 
 type Track struct {
-	Number int
-	Title  string
+	Number    int
+	Title     string
+	FullTrack string
 }

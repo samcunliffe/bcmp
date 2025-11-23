@@ -24,7 +24,7 @@ func extractNumberPrefix(s string) (int, string, error) {
 
 	// Expect "XX Track Name", "XX", "Track Name"
 	matches := re.FindStringSubmatch(s)
-	if !(len(matches) == 3) {
+	if len(matches) != 3 {
 		return -1, s, fmt.Errorf("error in regex match for track number extraction")
 	}
 

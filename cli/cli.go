@@ -9,7 +9,7 @@ import (
 )
 
 func SetupCLI() *cobra.Command {
-	// Only have a root commmand
+	// Only have a root command
 	var cmd = &cobra.Command{
 		Use:   "bcmptidy [zipFile] [flags]",
 		Short: "Extract and organise Bandcamp music files.",

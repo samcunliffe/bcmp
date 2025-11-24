@@ -58,7 +58,7 @@ func TestCLIHelp(t *testing.T) {
 		output := buf.String()
 		for _, want := range wantSubstrings {
 			if !strings.Contains(output, want) {
-				t.Errorf("Help output '%s' missing expected substring: %s", want, output)
+				t.Errorf("Help output '%s' missing expected substring: %s", output, want)
 			}
 		}
 	}

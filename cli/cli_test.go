@@ -6,12 +6,10 @@ import (
 	"testing"
 )
 
-// TODO: this modifies the global cmd variable without modifying it in between.
-// Figure out the idiomatic Go way to not do this.
-
 func TestCLINoArgs(t *testing.T) {
 	// Buffer to capture output
 	buf := &bytes.Buffer{}
+	cmd := SetupCLI()
 	cmd.SetOut(buf)
 
 	// Actually execute the command with no args - should prompt for zip file
@@ -23,6 +21,26 @@ func TestCLINoArgs(t *testing.T) {
 
 	// Check output contains expected prompt
 	expect := "Please provide the path to a Bandcamp zip file."
+	if !strings.Contains(output, expect) {
+		t.Errorf("Expected output to contain %q, got %q", expect, output)
+	}
+}
+
+func TestCLITooManyArgs(t *testing.T) {
+	// Buffer to capture output
+	buf := &bytes.Buffer{}
+	cmd := SetupCLI()
+	cmd.SetOut(buf)
+
+	// Set too many arguments
+	tooMany := []string{"file1.zip", "file2.zip"}
+	cmd.SetArgs(tooMany)
+
+	cmd.Execute()
+
+	// Check output contains expected prompt
+	output := buf.String()
+	expect := "Too many arguments provided. Please provide only the path to a Bandcamp zip file."
 	if !strings.Contains(output, expect) {
 		t.Errorf("Expected output to contain %q, got %q", expect, output)
 	}
@@ -42,6 +60,7 @@ func TestCLIHelp(t *testing.T) {
 	for _, flag := range helpFlags {
 		// Buffer to capture output
 		buf := &bytes.Buffer{}
+		cmd := SetupCLI()
 		cmd.SetOut(buf)
 
 		// Set the help flag as argument

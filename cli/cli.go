@@ -49,7 +49,6 @@ func SetupCLI() *cobra.Command {
 
 func Execute(cmd *cobra.Command) {
 	if err := cmd.Execute(); err != nil {
-		fmt.Println(err)
 		os.Exit(1)
 	}
 }

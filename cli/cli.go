@@ -30,7 +30,7 @@ func init() {
 		}
 		zipFilePath := args[0]
 		destination, _ := cmd.Flags().GetString("destination")
-		fmt.Printf("Welcome to bcmptidy!")
+		fmt.Println("Welcome to bcmptidy!")
 		fmt.Printf("Extracting %s to %s\n", zipFilePath, destination)
 		// extractor.ExtractAndRename(zipFilePath, destination)
 	}

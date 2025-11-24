@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/samcunliffe/bcmptidy/cli"
 
 func main() {
-    fmt.Println("hello world")
+	cli.Execute()
 }

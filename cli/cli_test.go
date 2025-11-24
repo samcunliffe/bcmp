@@ -6,6 +6,9 @@ import (
 	"testing"
 )
 
+// TODO: this modifies the global cmd variable without modifying it in between.
+// Figure out the idiomatic Go way to not do this.
+
 func TestCLINoArgs(t *testing.T) {
 	// Buffer to capture output
 	buf := &bytes.Buffer{}

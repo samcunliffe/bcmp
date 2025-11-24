@@ -36,7 +36,10 @@ func TestCLITooManyArgs(t *testing.T) {
 	tooMany := []string{"file1.zip", "file2.zip"}
 	cmd.SetArgs(tooMany)
 
-	cmd.Execute()
+	err := cmd.Execute()
+	if err != nil {
+		t.Errorf("Expected no error when executing with too many args, got %v", err)
+	}
 
 	// Check output contains expected prompt
 	output := buf.String()

@@ -29,7 +29,7 @@ func TestCLINoArgs(t *testing.T) {
 }
 
 func TestCLIHelp(t *testing.T) {
-	// Exceptable ways to ask for help
+	// Acceptable ways to ask for help
 	helpFlags := []string{"-h", "--help"}
 
 	// Helpful substrings expected in the help output

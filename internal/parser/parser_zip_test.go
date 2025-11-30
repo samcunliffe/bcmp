@@ -37,6 +37,7 @@ func TestParseZipFileName(t *testing.T) {
 func TestParseZipFileNameErrors(t *testing.T) {
 	var errorCases = []string{
 		"NoHyphenHere.zip",
+		"Too - Many - Hyphens.zip",
 		"MissingSuffix",
 		"Also Missing Hyphen.zip",
 		"Not a zip file.tar.gz",

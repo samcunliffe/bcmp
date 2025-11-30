@@ -42,6 +42,7 @@ To extract to some other location, use `-d,--destination`:
 
 ```sh
 bcmptidy --destination /somewhere/else/Music '/path/to/Downloads/Artist - Album.zip'
+```
 
 ## Support
 

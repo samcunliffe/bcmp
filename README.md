@@ -37,11 +37,10 @@ To run over a file and organise to the default location (`$HOME/Music`) run:
 bcmptidy '/path/to/Downloads/Artist - Album.zip'
 ```
 
-To extract to some other location, use `-p,--music-path`:
+To extract to some other location, use `-d,--destination`:
 
 ```sh
-bcmptidy --music-path /somewhere/else/Music '/path/to/Downloads/Artist - Album.zip'
-```
+bcmptidy --destination /somewhere/else/Music '/path/to/Downloads/Artist - Album.zip'
 
 ## Support
 

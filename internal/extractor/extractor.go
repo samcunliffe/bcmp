@@ -61,7 +61,7 @@ func ExtractAndRename(zipPath, destination string) error {
 		}
 
 		// Ignore cover art for now
-		if parser.IsCoverArtFile(f.Name) {
+		if parser.IsCoverArtFile(filepath.Base(f.Name)) {
 			fmt.Printf("Skipping: %s\n", f.Name)
 			continue
 		}

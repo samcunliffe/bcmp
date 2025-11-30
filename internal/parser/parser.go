@@ -95,7 +95,7 @@ func ParseMusicFileName(name string) (Track, error) {
 		return Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
 	if strings.Count(name, " - ") != 2 {
-		fmt.Printf("expected two ' - ' separators: '%s'", name)
+		return Track{}, fmt.Errorf("expected two ' - ' separators: '%s'", name)
 	}
 
 	// Split into artist, album, number, track title

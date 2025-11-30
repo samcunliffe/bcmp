@@ -63,6 +63,9 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Crypta - Shades of Sorrow - 01 The Aftermath",            // No file extension
 		"Crypta - Shades of Sorrow - 00 The Aftermath.flac",       // Track zero
 		"Crypta - Shades of Sorrow - Track One The Aftermath.mp3", // Non-numeric track number
+		"Crypta Shades of Sorrow 01 The Aftermath.flac",           // No hyphens
+		" - 01 The Aftermath.flac",                                // Missing artist and album
+		"Just the Song Title.flac",                                // Missing artist, album, track number
 	}
 	for _, filename := range errorCases {
 		_, err := ParseMusicFileName(filename)

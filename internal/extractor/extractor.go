@@ -55,6 +55,12 @@ func ExtractAndRename(zipPath, destination string) error {
 	for _, f := range rc.File {
 		fmt.Printf("Unzipping %s:\n", f.Name)
 
+		// Ignore directories
+		if f.FileInfo().IsDir() {
+			fmt.Printf("Skipping directory: %s\n", f.Name)
+			continue
+		}
+
 		// Ignore cover art for now
 		if parser.IsCoverArtFile(f.Name) {
 			fmt.Printf("Skipping: %s\n", f.Name)

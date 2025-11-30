@@ -19,7 +19,7 @@ func TestDefaultDestination(t *testing.T) {
 	}
 }
 
-func TestDegermineDefaultDestinationNoHome(t *testing.T) {
+func TestDetermineDefaultDestinationNoHome(t *testing.T) {
 	t.Setenv("HOME", "")
 
 	want := filepath.Join(".", "Music")

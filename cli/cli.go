@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/samcunliffe/bcmptidy/internal/extractor"
+	"github.com/samcunliffe/bcmptidy/internal/organiser"
 	"github.com/samcunliffe/bcmptidy/internal/parser"
 )
 
@@ -26,17 +27,8 @@ bcmptidy  "/path/to/your/bandcamp/downloads/Artist - Album Name.zip" \
   `,
 	}
 
-	// Determine default destination for music files
-	home, err := os.UserHomeDir()
-	if err != nil {
-		fmt.Println("Error getting user home directory:", err)
-		fmt.Println("Please provide --destination.")
-		home = "."
-	}
-	defaultMusicPath := filepath.Join(home, "Music")
-
 	// Setup flag
-	cmd.Flags().StringP("destination", "d", defaultMusicPath, "Where to put extracted music files")
+	cmd.Flags().StringP("destination", "d", organiser.DefaultDestination(), "Where to put extracted music files")
 
 	// The command to run
 	cmd.Run = func(cmd *cobra.Command, args []string) {
@@ -51,16 +43,19 @@ bcmptidy  "/path/to/your/bandcamp/downloads/Artist - Album Name.zip" \
 		zipFilePath := args[0]
 		destination, _ := cmd.Flags().GetString("destination")
 
-		fmt.Println("Welcome to bcmptidy!")
-		fmt.Printf("Extracting %s to %s\n", zipFilePath, destination)
-		// extractor.ExtractAndRename(zipFilePath, destination)
-
 		album, err := parser.ParseZipFileName(filepath.Base(zipFilePath))
 		if err != nil {
 			fmt.Printf("Error parsing zip file name: %v\n", err)
 			return
 		}
 		fmt.Printf("Parsed album: Artist='%s', Title='%s'\n", album.Artist, album.Title)
+
+		destination, err = organiser.CreateDestination(album, destination)
+		if err != nil {
+			fmt.Printf("Error creating destination directory: %v\n", err)
+			return
+		}
+		fmt.Printf("Extracting (%s → %s)\n", zipFilePath, destination)
 
 		err = extractor.ExtractAndRename(zipFilePath, destination)
 		if err != nil {

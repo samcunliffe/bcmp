@@ -13,6 +13,42 @@ If you're looking for a good example of idiomatic Golang code, you'll probably b
 
 I used GitHub Copilot for autocompletion and for PR review. But I do not use LLMs for generation of any substantial parts of the code. That would defeat the purpose.
 
+## Install
+
+You should be able to run
+
+```sh
+go install github.com/samcunliffe/bcmptidy@latest
+```
+
+then you should have `bcmptidy` in your path.
+If you don't try adding `$HOME/go/bin` to your `$PATH` (or reading `go help install`).
+
+## Usage
+
+Run `bcmptidy` without any arguments, or with `-h,--help` to get usage information:
+
+```sh
+bcmptidy --help
+```
+
+To run over a file and organise to the default location (`$HOME/Music`) run:
+
+```sh
+bcmptidy '/path/to/Downloads/Artist - Album.zip'
+```
+
+To extract to some other location, use `-d,--destination`:
+
+```sh
+bcmptidy --destination /somewhere/else/Music '/path/to/Downloads/Artist - Album.zip'
+
+## Support
+
+Should work with Linux and MacOS.
+I don't support Windows in my free time projects. No idea if this will work in Windows. Probably not.
+I don't have precompiled binaries, but maybe I will in the future.
+
 ## Specification
 
 Music from Bandcamp is downloaded either as individual music files or as a zip archive of the whole album.

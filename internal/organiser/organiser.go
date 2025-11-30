@@ -26,7 +26,7 @@ func DefaultDestination() string {
 func CreateDestination(album parser.Album, base string) (string, error) {
 	if _, err := os.Stat(base); os.IsNotExist(err) {
 		// It's noteworthy if, e.g. the user doesn't have a Music folder
-		fmt.Printf("Warning: base destination path %s does not exist. Will to create it.\n", base)
+		fmt.Printf("Warning: base destination path %s does not exist. Will create it.\n", base)
 	}
 	destination := filepath.Join(base, album.Artist, album.Title)
 	return destination, os.MkdirAll(destination, os.ModePerm)

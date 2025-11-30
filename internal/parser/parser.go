@@ -1,15 +1,28 @@
-package fileparser
+package parser
 
 import (
 	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/samcunliffe/bcmptidy/datamodel"
 )
 
+type Album struct {
+	Artist string
+	Title  string
+	// Tracks []Track
+}
+
+type Track struct {
+	Number    int
+	Title     string
+	FullTrack string
+	FileType  string
+}
+
 var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
+
+var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
 
 func splitOnHyphen(s string) (string, string) {
 	ss := strings.SplitN(s, " - ", 2)
@@ -38,38 +51,48 @@ func extractNumberPrefix(s string) (int, string, error) {
 	return number, strings.TrimSpace(matches[2]), nil
 }
 
-func ParseZipFileName(name string) (datamodel.Album, error) {
+func IsCoverArtFile(name string) bool {
+	lowerName := strings.ToLower(name)
+	for _, coverName := range coverArtFilenames {
+		if lowerName == coverName {
+			return true
+		}
+	}
+	return false
+}
+
+func ParseZipFileName(name string) (Album, error) {
 	// Trim the .zip suffix
 	if !strings.HasSuffix(name, ".zip") {
-		return datamodel.Album{}, fmt.Errorf("filename does not have .zip suffix")
+		return Album{}, fmt.Errorf("filename does not have .zip suffix")
 	}
 	name = strings.TrimSuffix(name, ".zip")
 
 	// Split into artist and album
 	if !strings.Contains(name, " - ") {
-		return datamodel.Album{}, fmt.Errorf("filename does not contain ' - ' separator")
+		return Album{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
 	artist, album := splitOnHyphen(name)
-	return datamodel.Album{Artist: artist, Title: removeParenthesis(album)}, nil
+	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }
 
-func ParseMusicFileName(name string) (datamodel.Track, error) {
+func ParseMusicFileName(name string) (Track, error) {
 	// Trim valid music file suffixes; error if none found
-	hadValidSuffix := false
+	suffixFound := ""
 	for _, suffix := range validMusicFiles {
 		if strings.HasSuffix(name, suffix) {
 			name = strings.TrimSuffix(name, suffix)
-			hadValidSuffix = true
+			suffixFound = suffix
 			break
 		}
 	}
-	if !hadValidSuffix {
-		return datamodel.Track{}, fmt.Errorf("filename does not have a valid music file suffix")
+	if suffixFound == "" {
+		return Track{}, fmt.Errorf("filename does not have a valid music file suffix")
 	}
 
 	// Should be two hyphens 'Artist - Album - XX Title'
 	if !strings.Contains(name, " - ") {
-		return datamodel.Track{}, fmt.Errorf("filename does not contain ' - ' separator")
+		return Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
 	if strings.Count(name, " - ") != 2 {
 		fmt.Printf("expected two ' - ' separators: '%s'", name)
@@ -80,8 +103,8 @@ func ParseMusicFileName(name string) (datamodel.Track, error) {
 	_, track := splitOnHyphen(albumAndTrack)
 	number, title, err := extractNumberPrefix(track)
 	if err != nil {
-		return datamodel.Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+		return Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
 	}
 
-	return datamodel.Track{Number: number, Title: title, FullTrack: track}, nil
+	return Track{Number: number, Title: title, FullTrack: track, FileType: suffixFound}, nil
 }

@@ -1,5 +1,5 @@
 # Binaries for programs and plugins
-rfmtbcmp
+bcmptidy
 bin/*
 *.exe
 *.exe~
@@ -28,3 +28,6 @@ go.work.sum
 
 # Editor/IDE
 .vscode/
+
+# macOS
+.DS_Store

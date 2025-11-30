@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/samcunliffe/bcmptidy/internal/extractor"
 	"github.com/samcunliffe/bcmptidy/internal/parser"
 )
 
@@ -60,6 +61,12 @@ bcmptidy  "/path/to/your/bandcamp/downloads/Artist - Album Name.zip" \
 			return
 		}
 		fmt.Printf("Parsed album: Artist='%s', Title='%s'\n", album.Artist, album.Title)
+
+		err = extractor.ExtractAndRename(zipFilePath, destination)
+		if err != nil {
+			fmt.Printf("Error extracting and renaming files: %v\n", err)
+			return
+		}
 	}
 	return cmd
 }

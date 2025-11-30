@@ -19,7 +19,7 @@ func trackDestinationPath(t parser.Track, destination string) string {
 func processTrack(f *zip.File, destination string) error {
 	rc, err := f.Open()
 	if err != nil {
-		log.Fatalf("impossible to open file in archive: %s", err)
+		return fmt.Errorf("impossible to open file in archive: %s", err)
 	}
 	defer rc.Close()
 
@@ -47,14 +47,13 @@ func ExtractAndRename(zipPath, destination string) error {
 	// Open zip archive for reading.
 	rc, err := zip.OpenReader(zipPath)
 	if err != nil {
-		log.Fatalf("impossible to open zip reader: %s", err)
+		return fmt.Errorf("impossible to open zip reader: %s", err)
 	}
 	defer rc.Close()
 
 	// Iterate through the files in the archive,
 	for _, f := range rc.File {
 		fmt.Printf("Unzipping %s:\n", f.Name)
-		fmt.Println(f)
 
 		// Ignore cover art for now
 		if parser.IsCoverArtFile(f.Name) {
@@ -64,9 +63,8 @@ func ExtractAndRename(zipPath, destination string) error {
 
 		err := processTrack(f, destination)
 		if err != nil {
-			log.Fatalf("error processing track %s: %v", f.Name, err)
+			return fmt.Errorf("error processing track %s: %v", f.Name, err)
 		}
-		continue
 	}
 	return nil
 }

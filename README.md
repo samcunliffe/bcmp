@@ -20,7 +20,8 @@ You should be able to run
 go install github.com/samcunliffe/bcmptidy@latest
 ```
 
-then you'll have `bcmptidy` in your path.
+then you should have `bcmptidy` in your path.
+If you don't try adding `$HOME/go/bin` to your `$PATH` (or reading `go help install`).
 
 ## Usage
 

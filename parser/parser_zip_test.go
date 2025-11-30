@@ -1,4 +1,4 @@
-package fileparser
+package parser
 
 import "testing"
 

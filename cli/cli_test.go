@@ -89,22 +89,37 @@ func TestCLIHelp(t *testing.T) {
 func TestCLIEndToEndProcessing(t *testing.T) {
 	destination := t.TempDir()
 
-	// Buffer to capture output
-	buf := &bytes.Buffer{}
-	cmd := SetupCLI()
-	cmd.SetOut(buf)
-
-	// Actually execute the command
-	cmd.SetArgs([]string{"testdata/Artist - Album.zip", "--destination", destination})
-	err := cmd.Execute()
-	if err != nil {
-		t.Errorf("Expected no error when executing with mocked calls, got %v", err)
+	testCases := []struct {
+		filename   string
+		want_error bool
+	}{
+		{"testdata/Artist - Album.zip", false},
+		{"testdata/Artist - Nonexistant Album.zip", true},
 	}
 
-	// Check output contains no error messages.
-	// TODO switch to RunE and actually use proper errors?
-	output := buf.String()
-	if strings.Contains(output, "Error") {
-		t.Errorf("Expected no error messages in output, got %q", output)
+	for _, testcase := range testCases {
+
+		// Buffer to capture output
+		buf := &bytes.Buffer{}
+		cmd := SetupCLI()
+		cmd.SetOut(buf)
+
+		// Actually execute the command
+		cmd.SetArgs([]string{testcase.filename, "--destination", destination})
+		err := cmd.Execute()
+
+		output := buf.String()
+		if testcase.want_error {
+			if !strings.Contains(output, "Error") {
+				t.Errorf("Expected error messages in output when processing %s, got %q", testcase.filename, output)
+			}
+		} else {
+			if err != nil {
+				t.Errorf("Expected no error when processing %s, got %v", testcase.filename, err)
+			}
+			if strings.Contains(output, "Error") {
+				t.Errorf("Expected no error messages in output, got %q", output)
+			}
+		}
 	}
 }

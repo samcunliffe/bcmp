@@ -50,7 +50,7 @@ func TestInvalidArchive(t *testing.T) {
 
 	err := ExtractAndRename(testfile, destination)
 	if err == nil {
-		t.Errorf("Expected an error for an invalid archive")
+		t.Fatal("Expected an error for an invalid archive")
 	}
 	if !strings.Contains(err.Error(), "filename does not have a valid music file suffix") {
 		t.Errorf("Expected error message about no valid music files, got: %v", err.Error())
@@ -74,5 +74,18 @@ func TestNoFilePermissions(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "permission denied") {
 		t.Errorf("Expected permission denied error, got: %v", err.Error())
+	}
+}
+
+func TestArchiveOnlyDirectory(t *testing.T) {
+	destination := t.TempDir()
+	testfile := "testdata/no-files-only-directories.zip"
+
+	err := ExtractAndRename(testfile, destination)
+	if err == nil {
+		t.Errorf("Expected an error for archive with only directories")
+	}
+	if !strings.Contains(err.Error(), "contains a directory") {
+		t.Errorf("Expected error message about directories only, got: %v", err.Error())
 	}
 }

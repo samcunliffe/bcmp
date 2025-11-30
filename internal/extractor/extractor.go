@@ -54,10 +54,9 @@ func ExtractAndRename(zipPath, destination string) error {
 	for _, f := range rc.File {
 		fmt.Printf("Unzipping %s:\n", f.Name)
 
-		// Ignore directories
+		// Any directories - this is likely not a bandcamp file
 		if f.FileInfo().IsDir() {
-			fmt.Printf("Skipping directory: %s\n", f.Name)
-			continue
+			return fmt.Errorf("archive contains a directory, not a valid bandcamp zip")
 		}
 
 		// Ignore cover art for now

@@ -83,7 +83,7 @@ func TestArchiveOnlyDirectory(t *testing.T) {
 
 	err := ExtractAndRename(testfile, destination)
 	if err == nil {
-		t.Errorf("Expected an error for archive with only directories")
+		t.Fatal("Expected an error for archive with only directories")
 	}
 	if !strings.Contains(err.Error(), "contains a directory") {
 		t.Errorf("Expected error message about directories only, got: %v", err.Error())

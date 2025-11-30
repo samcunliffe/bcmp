@@ -30,19 +30,28 @@ func TestParseMusicFileName(t *testing.T) {
 		want_number    int
 		want_title     string
 		want_track     string
+		want_suffix    string
 	}{
-		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", 1, "The Aftermath", "01 The Aftermath"},
-		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", 2, "Dark Clouds", "02 Dark Clouds"},
-		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", 6, "The Other Side of Anger", "06 The Other Side of Anger"},
+		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", 1, "The Aftermath", "01 The Aftermath", ".flac"},
+		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", 2, "Dark Clouds", "02 Dark Clouds", ".mp3"},
+		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
 	}
 	for _, testcase := range testCases {
 		got, err := ParseMusicFileName(testcase.input_filename)
 		if err != nil {
 			t.Errorf("ParseMusicFileName(%q) returned error: %v", testcase.input_filename, err)
 		}
-		if got.Number != testcase.want_number || got.Title != testcase.want_title || got.FullTrack != testcase.want_track {
-			t.Errorf("ParseMusicFileName(%q) = number: %d, title: %q, fulltrack: %q; want number: %d, title: %q, fulltrack: %q",
-				testcase.input_filename, got.Number, got.Title, got.FullTrack, testcase.want_number, testcase.want_title, testcase.want_track)
+		if got.Number != testcase.want_number {
+			t.Errorf("ParseMusicFileName(%q) Number = %d; want %d", testcase.input_filename, got.Number, testcase.want_number)
+		}
+		if got.Title != testcase.want_title {
+			t.Errorf("ParseMusicFileName(%q) Title = %q; want %q", testcase.input_filename, got.Title, testcase.want_title)
+		}
+		if got.FullTrack != testcase.want_track {
+			t.Errorf("ParseMusicFileName(%q) FullTrack = %q; want %q", testcase.input_filename, got.FullTrack, testcase.want_track)
+		}
+		if got.FileType != testcase.want_suffix {
+			t.Errorf("ParseMusicFileName(%q) FileType = %q; want %q", testcase.input_filename, got.FileType, testcase.want_suffix)
 		}
 	}
 }

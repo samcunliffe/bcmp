@@ -17,9 +17,12 @@ type Track struct {
 	Number    int
 	Title     string
 	FullTrack string
+	FileType  string
 }
 
 var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
+
+var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
 
 func splitOnHyphen(s string) (string, string) {
 	ss := strings.SplitN(s, " - ", 2)
@@ -48,6 +51,16 @@ func extractNumberPrefix(s string) (int, string, error) {
 	return number, strings.TrimSpace(matches[2]), nil
 }
 
+func IsCoverArtFile(name string) bool {
+	lowerName := strings.ToLower(name)
+	for _, coverName := range coverArtFilenames {
+		if lowerName == coverName {
+			return true
+		}
+	}
+	return false
+}
+
 func ParseZipFileName(name string) (Album, error) {
 	// Trim the .zip suffix
 	if !strings.HasSuffix(name, ".zip") {
@@ -65,15 +78,15 @@ func ParseZipFileName(name string) (Album, error) {
 
 func ParseMusicFileName(name string) (Track, error) {
 	// Trim valid music file suffixes; error if none found
-	hadValidSuffix := false
+	suffixFound := ""
 	for _, suffix := range validMusicFiles {
 		if strings.HasSuffix(name, suffix) {
 			name = strings.TrimSuffix(name, suffix)
-			hadValidSuffix = true
+			suffixFound = suffix
 			break
 		}
 	}
-	if !hadValidSuffix {
+	if suffixFound == "" {
 		return Track{}, fmt.Errorf("filename does not have a valid music file suffix")
 	}
 
@@ -93,5 +106,5 @@ func ParseMusicFileName(name string) (Track, error) {
 		return Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
 	}
 
-	return Track{Number: number, Title: title, FullTrack: track}, nil
+	return Track{Number: number, Title: title, FullTrack: track, FileType: suffixFound}, nil
 }

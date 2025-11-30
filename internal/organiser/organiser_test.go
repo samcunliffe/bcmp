@@ -1,6 +1,7 @@
 package organiser
 
 import (
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -53,6 +54,9 @@ func TestCreateDestination(t *testing.T) {
 		}
 		if got != testcase.want {
 			t.Errorf("CreateDestination(%v, %q) = %q; want %q", testcase.album, base, got, testcase.want)
+		}
+		if _, err := os.Stat(got); os.IsNotExist(err) {
+			t.Errorf("CreateDestination did not create directory %q", got)
 		}
 	}
 }

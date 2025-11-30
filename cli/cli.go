@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -45,21 +44,21 @@ bcmptidy  "/path/to/your/bandcamp/downloads/Artist - Album Name.zip" \
 
 		album, err := parser.ParseZipFileName(filepath.Base(zipFilePath))
 		if err != nil {
-			fmt.Printf("Error parsing zip file name: %v\n", err)
+			cmd.Printf("Error parsing zip file name: %v\n", err)
 			return
 		}
-		fmt.Printf("Parsed album: Artist='%s', Title='%s'\n", album.Artist, album.Title)
+		cmd.Printf("Parsed album: Artist='%s', Title='%s'\n", album.Artist, album.Title)
 
 		destination, err = organiser.CreateDestination(album, destination)
 		if err != nil {
-			fmt.Printf("Error creating destination directory: %v\n", err)
+			cmd.Printf("Error creating destination directory: %v\n", err)
 			return
 		}
-		fmt.Printf("Extracting (%s → %s)\n", zipFilePath, destination)
+		cmd.Printf("Extracting (%s → %s)\n", zipFilePath, destination)
 
 		err = extractor.ExtractAndRename(zipFilePath, destination)
 		if err != nil {
-			fmt.Printf("Error extracting and renaming files: %v\n", err)
+			cmd.Printf("Error extracting and renaming files: %v\n", err)
 			return
 		}
 	}

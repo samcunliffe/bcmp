@@ -85,3 +85,25 @@ func TestCLIHelp(t *testing.T) {
 		}
 	}
 }
+
+func TestCLIEndToEndProcessing(t *testing.T) {
+	destination := t.TempDir()
+
+	// Buffer to capture output
+	buf := &bytes.Buffer{}
+	cmd := SetupCLI()
+	cmd.SetOut(buf)
+
+	// Actually execute the command
+	cmd.SetArgs([]string{"testdata/Artist - Album.zip", "--destination", destination})
+	err := cmd.Execute()
+	if err != nil {
+		t.Errorf("Expected no error when executing with mocked calls, got %v", err)
+	}
+
+	// Check output contains expected success message
+	output := buf.String()
+	if strings.Contains(output, "Error") {
+		t.Errorf("Expected no error messages in output, got %q", output)
+	}
+}

@@ -1,6 +1,6 @@
 # bcmptidy - Tidy Bandcamp Files
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/samcunliffe/bcmptidy?)](https://goreportcard.com/report/github.com/samcunliffe/bcmptidy) · [![Build and test](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml) · [![codecov](https://codecov.io/gh/samcunliffe/bcmptidy/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/bcmptidy)
+[![Build and test](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/samcunliffe/bcmptidy?)](https://goreportcard.com/report/github.com/samcunliffe/bcmptidy) [![codecov](https://codecov.io/gh/samcunliffe/bcmptidy/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/bcmptidy) [![release](https://img.shields.io/github/release-pre/samcunliffe/bcmptidy.svg)](https://github.com/samcunliffe/bcmptidy/releases)
 
 This is a Go command-line utility for extracting, renaming, and organising music files purchased and downloaded from [Bandcamp](https://bandcamp.com).
 

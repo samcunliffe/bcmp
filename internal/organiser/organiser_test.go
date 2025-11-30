@@ -18,6 +18,16 @@ func TestDefaultDestination(t *testing.T) {
 	}
 }
 
+func TestDegermineDefaultDestinationNoHome(t *testing.T) {
+	t.Setenv("HOME", "")
+
+	want := filepath.Join(".", "Music")
+	got := DefaultDestination()
+	if got != want {
+		t.Errorf("DefaultDestination() = %q; want %q", got, want)
+	}
+}
+
 func TestCreateDestination(t *testing.T) {
 	base := t.TempDir()
 
@@ -45,4 +55,20 @@ func TestCreateDestination(t *testing.T) {
 			t.Errorf("CreateDestination(%v, %q) = %q; want %q", testcase.album, base, got, testcase.want)
 		}
 	}
+}
+
+func TestCreateDestinationNonExistentBase(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "some_nonexistent_subdir")
+
+	album := parser.Album{Artist: "Crypta", Title: "Shades of Sorrow"}
+	got, err := CreateDestination(album, base)
+	if err != nil {
+		t.Errorf("CreateDestination(%v, %q) returned error: %v", album, base, err)
+	}
+	want := filepath.Join(base, "Crypta", "Shades of Sorrow")
+	if got != want {
+		t.Errorf("CreateDestination(%v, %q) = %q; want %q", album, base, got, want)
+	}
+	// TODO: Might actually be better to do something else than write a warning to stdout...
+	// Investigate logging and a -v/--verbose flag?
 }

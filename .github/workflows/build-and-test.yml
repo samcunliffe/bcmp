@@ -21,6 +21,9 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
 
+      - name: Check formatting
+        run: go fmt ./...
+
       - name: Build
         run: go build -v ./...
 

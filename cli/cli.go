@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"github.com/samcunliffe/bcmptidy/internal/parser"
 )
 
 func SetupCLI() *cobra.Command {
@@ -13,6 +15,14 @@ func SetupCLI() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "bcmptidy [zipFile] [flags]",
 		Short: "Extract and organise Bandcamp music files.",
+		Example: `
+# Run and extract music to $HOME/Music:
+bcmptidy "/path/to/your/bandcamp/downloads/Artist - Album Name.zip"
+
+# Run and extract the music to somewhere else:
+bcmptidy  "/path/to/your/bandcamp/downloads/Artist - Album Name.zip" \
+  --destination "/path/to/your/desired/music/folder"
+  `,
 	}
 
 	// Determine default destination for music files
@@ -43,6 +53,13 @@ func SetupCLI() *cobra.Command {
 		fmt.Println("Welcome to bcmptidy!")
 		fmt.Printf("Extracting %s to %s\n", zipFilePath, destination)
 		// extractor.ExtractAndRename(zipFilePath, destination)
+
+		album, err := parser.ParseZipFileName(filepath.Base(zipFilePath))
+		if err != nil {
+			fmt.Printf("Error parsing zip file name: %v\n", err)
+			return
+		}
+		fmt.Printf("Parsed album: Artist='%s', Title='%s'\n", album.Artist, album.Title)
 	}
 	return cmd
 }

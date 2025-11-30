@@ -101,7 +101,8 @@ func TestCLIEndToEndProcessing(t *testing.T) {
 		t.Errorf("Expected no error when executing with mocked calls, got %v", err)
 	}
 
-	// Check output contains expected success message
+	// Check output contains no error messages.
+	// TODO switch to RunE and actually use proper errors?
 	output := buf.String()
 	if strings.Contains(output, "Error") {
 		t.Errorf("Expected no error messages in output, got %q", output)

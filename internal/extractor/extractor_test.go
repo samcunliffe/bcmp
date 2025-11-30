@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestExtractAndRenameE2E(t *testing.T) {
+func TestExtractAndRename(t *testing.T) {
 
 	destination := t.TempDir()
 	testfile := "testdata/Artist - Album.zip"

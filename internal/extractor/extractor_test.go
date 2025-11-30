@@ -70,7 +70,7 @@ func TestNoFilePermissions(t *testing.T) {
 
 	err = ExtractAndRename(testfile, destination)
 	if err == nil {
-		t.Errorf("Expected an error due to lack of write permissions")
+		t.Fatal("Expected an error due to lack of write permissions")
 	}
 	if !strings.Contains(err.Error(), "permission denied") {
 		t.Errorf("Expected permission denied error, got: %v", err.Error())

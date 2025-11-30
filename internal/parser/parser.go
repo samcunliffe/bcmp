@@ -72,6 +72,9 @@ func ParseZipFileName(name string) (Album, error) {
 	if !strings.Contains(name, " - ") {
 		return Album{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
+	if strings.Count(name, " - ") != 1 {
+		return Album{}, fmt.Errorf("expected only one ' - ' separator: '%s'", name)
+	}
 	artist, album := splitOnHyphen(name)
 	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }

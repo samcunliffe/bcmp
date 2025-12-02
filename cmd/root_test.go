@@ -40,6 +40,7 @@ func TestRootCmdHelp(t *testing.T) {
 		// Buffer to capture output
 		buf := &bytes.Buffer{}
 		rootCmd.SetOut(buf)
+		defer rootCmd.SetOut(nil)
 
 		// Set the help flag as argument
 		args := []string{flag}

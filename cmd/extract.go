@@ -12,10 +12,10 @@ import (
 	"github.com/samcunliffe/bcmptidy/internal/parser"
 )
 
-// extractCmd represents the extract command
 var extractCmd = &cobra.Command{
-	Use:   "extract /path/to/Artist - Album Name.zip [flags]",
+	Use:   "extract /path/to/Artist\\ -\\ Album\\ Name.zip [flags]",
 	Short: "Extract and tidy Bandcamp music files from a zip archive.",
+	Args:  cobra.ExactArgs(1),
 	// 	Long: `A longer description that spans multiple lines and likely contains examples
 	// and usage of using your command. For example:
 	//
@@ -29,27 +29,28 @@ var extractCmd = &cobra.Command{
 			return nil
 		}
 		if len(args) > 1 {
-			return fmt.Errorf("Too many arguments provided. Please provide only the path to a Bandcamp zip file.\n")
+			return fmt.Errorf("too many arguments")
 		}
-		zipFilePath := args[0]
 		destination, _ := cmd.Flags().GetString("destination")
 
-		err := os.Stat(zipFilePath)
+		zipFilePath := args[0]
+		fi, err := os.Stat(zipFilePath)
 		if err != nil {
-			return fmt.Errorf("Error accessing zip file: %v", err)
+			return fmt.Errorf("error accessing zip file: %v", err)
+		}
+		if fi.IsDir() || fi.Size() == 0 {
+			return fmt.Errorf("the zip file: %v is not valid", fi.Name())
 		}
 
 		album, err := parser.ParseZipFileName(filepath.Base(zipFilePath))
 		if err != nil {
 			return err
 		}
-		cmd.Printf("Parsed album: Artist='%s', Title='%s'\n", album.Artist, album.Title)
 
 		destination, err = organiser.CreateDestination(album, destination)
 		if err != nil {
 			return err
 		}
-		cmd.Printf("Extracting (%s → %s)\n", zipFilePath, destination)
 
 		return extractor.ExtractAndRename(zipFilePath, destination)
 	},
@@ -57,15 +58,4 @@ var extractCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(extractCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// extractCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	dd := organiser.DefaultDestination()
-	extractCmd.Flags().StringP("destination", "d", dd, "where to put extracted music files")
 }

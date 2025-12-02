@@ -24,13 +24,6 @@ var extractCmd = &cobra.Command{
 	// to quickly create a Cobra application.`,
 	Aliases: []string{"x"},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			cmd.Print("Please provide the path to a Bandcamp zip file.\n")
-			return nil
-		}
-		if len(args) > 1 {
-			return fmt.Errorf("too many arguments")
-		}
 		destination, _ := cmd.Flags().GetString("destination")
 
 		zipFilePath := args[0]

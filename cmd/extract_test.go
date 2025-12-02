@@ -14,7 +14,7 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 		want_error bool
 	}{
 		{"testdata/Artist - Album.zip", false},
-		// {"testdata/Artist - Nonexistant Album.zip", true},
+		// {"testdata/Artist - Nonexistent Album.zip", true},
 	}
 
 	for _, testcase := range testCases {

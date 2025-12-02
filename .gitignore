@@ -1,5 +1,6 @@
 # Binaries for programs and plugins
 bcmptidy
+bcmp
 bin/*
 *.exe
 *.exe~
@@ -16,8 +17,12 @@ coverage.*
 *.coverprofile
 profile.cov
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Test output and stuff from local dev testing
+*.flac
+*.zip
+cover.jpg
+cover.png
+Music/
 
 # Go workspace file
 go.work
@@ -31,3 +36,4 @@ go.work.sum
 
 # macOS
 .DS_Store
+

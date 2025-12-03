@@ -21,24 +21,24 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 
 		// Buffer to capture output
 		buf := &bytes.Buffer{}
-		extractCmd.SetOut(buf)
+		rootCmd.SetOut(buf)
 
 		// Actually execute the command
-		extractCmd.SetArgs([]string{testcase.filename, "--destination", destination})
-		defer extractCmd.SetOut(nil)
-		err := extractCmd.Execute()
+		rootCmd.SetArgs([]string{"extract", testcase.filename, "--destination", destination})
+		defer rootCmd.SetOut(nil)
+		err := rootCmd.Execute()
 
-		output := buf.String()
+		gotOutput := buf.String()
 		if testcase.want_error {
 			if err == nil {
-				t.Errorf("Expected error when processing %s, got %q", testcase.filename, output)
+				t.Errorf("Expected error when processing %s, got %q", testcase.filename, gotOutput)
 			}
 		} else {
 			if err != nil {
 				t.Errorf("Expected no error when processing %s, got %v", testcase.filename, err)
 			}
-			if strings.Contains(output, "Error") {
-				t.Errorf("Expected no error messages in output, got %q", output)
+			if strings.Contains(gotOutput, "Error") {
+				t.Errorf("Expected no error messages in output, got %q", gotOutput)
 			}
 		}
 	}

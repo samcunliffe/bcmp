@@ -40,11 +40,11 @@ func TestRootCmdHelp(t *testing.T) {
 		// Buffer to capture output
 		buf := &bytes.Buffer{}
 		rootCmd.SetOut(buf)
-		defer rootCmd.SetOut(nil)
 
 		// Set the help flag as argument
 		args := []string{flag}
 		rootCmd.SetArgs(args)
+		defer rootCmd.SetArgs(nil)
 
 		// Actually execute the command - should show help without error
 		err := rootCmd.Execute()

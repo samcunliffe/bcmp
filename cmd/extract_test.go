@@ -25,7 +25,7 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 
 		// Actually execute the command
 		rootCmd.SetArgs([]string{"extract", testcase.filename, "--destination", destination})
-		defer rootCmd.SetOut(nil)
+		defer rootCmd.SetArgs(nil)
 		err := rootCmd.Execute()
 
 		gotOutput := buf.String()

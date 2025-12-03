@@ -22,7 +22,7 @@ func processTrack(f *zip.File, destination string) error {
 	}
 	defer rc.Close()
 
-	track, err := parser.ParseMusicFileName(f.Name)
+	_, track, err := parser.ParseMusicFileName(f.Name)
 	if err != nil {
 		return fmt.Errorf("error parsing music file name %s: %v", f.Name, err)
 	}

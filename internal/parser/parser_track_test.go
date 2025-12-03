@@ -37,7 +37,7 @@ func TestParseMusicFileName(t *testing.T) {
 		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
 	}
 	for _, testcase := range testCases {
-		got, err := ParseMusicFileName(testcase.inputFilename)
+		_, got, err := ParseMusicFileName(testcase.inputFilename)
 		if err != nil {
 			t.Errorf("ParseMusicFileName(%q) returned error: %v", testcase.inputFilename, err)
 		}
@@ -68,7 +68,7 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Just the Song Title.flac",                                // Missing artist, album, track number
 	}
 	for _, filename := range errorCases {
-		_, err := ParseMusicFileName(filename)
+		_, _, err := ParseMusicFileName(filename)
 		if err == nil {
 			t.Errorf("ParseMusicFileName(%q) expected to return error, but got nil", filename)
 		}

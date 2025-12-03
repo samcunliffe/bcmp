@@ -1,6 +1,6 @@
 package main
 
-import "github.com/samcunliffe/bcmptidy/cmd"
+import "github.com/samcunliffe/bcmp/cmd"
 
 func main() {
 	cmd.Execute()

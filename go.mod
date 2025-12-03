@@ -1,4 +1,4 @@
-module github.com/samcunliffe/bcmptidy
+module github.com/samcunliffe/bcmp
 
 go 1.22.2
 

@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/samcunliffe/bcmptidy/internal/parser"
+	"github.com/samcunliffe/bcmp/internal/parser"
 )
 
 func trackDestinationPath(t parser.Track, destination string) string {

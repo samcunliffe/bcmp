@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/samcunliffe/bcmptidy/internal/parser"
+	"github.com/samcunliffe/bcmp/internal/parser"
 )
 
 func TestDefaultDestination(t *testing.T) {

@@ -1,6 +1,6 @@
-# bcmptidy - Tidy Bandcamp Files
+# bcmp tidy - Tidy Bandcamp Files
 
-[![Build and test](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/bcmptidy/actions/workflows/build-and-test.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/samcunliffe/bcmptidy?)](https://goreportcard.com/report/github.com/samcunliffe/bcmptidy) [![codecov](https://codecov.io/gh/samcunliffe/bcmptidy/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/bcmptidy) [![release](https://img.shields.io/github/release-pre/samcunliffe/bcmptidy.svg)](https://github.com/samcunliffe/bcmptidy/releases)
+[![Build and test](https://github.com/samcunliffe/bcmp/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/samcunliffe/bcmp/actions/workflows/build-and-test.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/samcunliffe/bcmp?)](https://goreportcard.com/report/github.com/samcunliffe/bcmp) [![codecov](https://codecov.io/gh/samcunliffe/bcmp/graph/badge.svg?token=NESNLRXF4V)](https://codecov.io/gh/samcunliffe/bcmp) [![release](https://img.shields.io/github/release-pre/samcunliffe/bcmp.svg)](https://github.com/samcunliffe/bcmp/releases)
 
 This is a Go command-line utility for extracting, renaming, and organising music files purchased and downloaded from [Bandcamp](https://bandcamp.com).
 
@@ -18,20 +18,20 @@ I used GitHub Copilot for autocompletion and for PR review. But I do not use LLM
 You should be able to run
 
 ```sh
-go install github.com/samcunliffe/bcmptidy@latest
+go install github.com/samcunliffe/bcmp@latest
 ```
 
-then you should have `bcmptidy` in your path.
+then you should have `bcmp` in your path.
 If you don't try adding `$HOME/go/bin` to your `$PATH` (or reading `go help install`).
 
 ## Usage
 
-Run `bcmptidy` without any arguments, or with `help,-h,--help` to get usage information:
+Run `bcmp` without any arguments, or with `help,-h,--help` to get usage information:
 
 To run over a file and organise to the default location (`$HOME/Music`) run:
 
 ```sh
-bcmptidy extract '/path/to/Downloads/Artist - Album.zip'
+bcmp extract '/path/to/Downloads/Artist - Album.zip'
 ```
 
 To extract to some other location, use `-d,--destination`.

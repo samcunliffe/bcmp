@@ -3,7 +3,7 @@ package cmd
 import (
 	"os"
 
-	"github.com/samcunliffe/bcmptidy/internal/organiser"
+	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/spf13/cobra"
 )
 

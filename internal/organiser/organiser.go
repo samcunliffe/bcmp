@@ -5,7 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/samcunliffe/bcmptidy/internal/parser"
+	"github.com/samcunliffe/bcmp/internal/parser"
 )
 
 // Determine default destination for music files

@@ -7,9 +7,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/samcunliffe/bcmptidy/internal/extractor"
-	"github.com/samcunliffe/bcmptidy/internal/organiser"
-	"github.com/samcunliffe/bcmptidy/internal/parser"
+	"github.com/samcunliffe/bcmp/internal/extractor"
+	"github.com/samcunliffe/bcmp/internal/organiser"
+	"github.com/samcunliffe/bcmp/internal/parser"
 )
 
 var extractCmd = &cobra.Command{

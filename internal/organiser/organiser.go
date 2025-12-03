@@ -38,8 +38,11 @@ func CheckFile(path string) error {
 	if err != nil {
 		return fmt.Errorf("error accessing zip file: %v", err)
 	}
-	if fi.IsDir() || fi.Size() == 0 {
-		return fmt.Errorf("the zip file: %v is not valid", fi.Name())
+	if fi.IsDir() {
+		return fmt.Errorf("the path: %v is a directory, not a file", fi.Name())
+	}
+	if fi.Size() == 0 {
+		return fmt.Errorf("the file: %v is empty", fi.Name())
 	}
 	return nil
 }

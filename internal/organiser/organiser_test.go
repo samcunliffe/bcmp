@@ -97,3 +97,17 @@ func TestCheckFileEmptyFile(t *testing.T) {
 		t.Errorf("CheckFile on empty file did not return error")
 	}
 }
+
+func TestCheckFileValidZipFile(t *testing.T) {
+	err := CheckFile("testdata/validfile.zip")
+	if err != nil {
+		t.Errorf("CheckFile on valid file returned error: %v", err)
+	}
+}
+
+func TestCheckFileValidMusicFile(t *testing.T) {
+	err := CheckFile("testdata/ding.flac")
+	if err != nil {
+		t.Errorf("CheckFile on valid music file returned error: %v", err)
+	}
+}

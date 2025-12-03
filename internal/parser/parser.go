@@ -103,21 +103,21 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
-	albumTitle, track := splitOnHyphen(albumAndTrack)
+	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
 
-	a := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
+	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
-	number, songTitle, err := extractNumberPrefix(track)
+	number, songTitle, err := extractNumberPrefix(fullTrack)
 	if err != nil {
-		return a, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
 	}
 
-	t := Track{
+	track := Track{
 		Number:    number,
 		Title:     songTitle,
-		FullTrack: track,
+		FullTrack: fullTrack,
 		FileType:  suffixFound,
 	}
 
-	return a, t, nil
+	return album, track, nil
 }

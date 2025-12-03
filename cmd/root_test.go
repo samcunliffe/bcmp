@@ -48,10 +48,9 @@ func TestRootCmdHelp(t *testing.T) {
 		args := []string{flag}
 		rootCmd.SetArgs(args)
 
-
 		// Actually execute the command - should show help without error
 		err := rootCmd.Execute()
-		rootCmd.SetArgs(nil)
+		rootCmd.SetArgs(nil) // cleanup for next iteration or next execution
 		if err != nil {
 			t.Errorf("Expected no error for help flag %s, got %v", flag, err)
 		}

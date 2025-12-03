@@ -14,7 +14,7 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 		want_error bool
 	}{
 		{"testdata/Artist - Album.zip", false},
-		// {"testdata/Artist - Nonexistent Album.zip", true},
+		{"testdata/Artist - Nonexistent Album.zip", true},
 	}
 
 	for _, testcase := range testCases {
@@ -25,8 +25,8 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 
 		// Actually execute the command
 		rootCmd.SetArgs([]string{"extract", testcase.filename, "--destination", destination})
-		defer rootCmd.SetArgs(nil)
 		err := rootCmd.Execute()
+		rootCmd.SetArgs(nil) // cleanup for next iteration or next execution
 
 		gotOutput := buf.String()
 		if testcase.want_error {

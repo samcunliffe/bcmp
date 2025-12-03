@@ -4,9 +4,9 @@ import "testing"
 
 func TestParseZipFileName(t *testing.T) {
 	var testCases = []struct {
-		input_filename string
-		want_artist    string
-		want_album     string
+		inputFilename string
+		wantArtist    string
+		wantAlbum     string
 	}{
 		{"Architects - For Those That Wish To Exist.zip", "Architects", "For Those That Wish To Exist"},
 		{"Bloodywood - Nu Delhi.zip", "Bloodywood", "Nu Delhi"},
@@ -23,13 +23,13 @@ func TestParseZipFileName(t *testing.T) {
 		{"Pallbearer - Mind Burns Alive (pre-order).zip", "Pallbearer", "Mind Burns Alive"},
 	}
 	for _, testcase := range testCases {
-		got, err := ParseZipFileName(testcase.input_filename)
+		got, err := ParseZipFileName(testcase.inputFilename)
 		if err != nil {
-			t.Errorf("ParseZipArchiveFileName(%q) returned error: %v", testcase.input_filename, err)
+			t.Errorf("ParseZipArchiveFileName(%q) returned error: %v", testcase.inputFilename, err)
 		}
-		if got.Artist != testcase.want_artist || got.Title != testcase.want_album {
+		if got.Artist != testcase.wantArtist || got.Title != testcase.wantAlbum {
 			t.Errorf("ParseZipArchiveFileName(%q) = artist: %q, album: %q; want artist: %q, album: %q",
-				testcase.input_filename, got.Artist, got.Title, testcase.want_artist, testcase.want_album)
+				testcase.inputFilename, got.Artist, got.Title, testcase.wantArtist, testcase.wantAlbum)
 		}
 	}
 }

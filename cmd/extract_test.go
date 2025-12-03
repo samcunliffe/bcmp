@@ -10,8 +10,8 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 	destination := t.TempDir()
 
 	testCases := []struct {
-		filename   string
-		want_error bool
+		filename  string
+		wantError bool
 	}{
 		{"testdata/Artist - Album.zip", false},
 		{"testdata/Artist - Nonexistent Album.zip", true},
@@ -29,7 +29,7 @@ func TestExtractEndToEndProcessing(t *testing.T) {
 		rootCmd.SetArgs(nil) // cleanup for next iteration or next execution
 
 		gotOutput := buf.String()
-		if testcase.want_error {
+		if testcase.wantError {
 			if err == nil {
 				t.Errorf("Expected error when processing %s, got %q", testcase.filename, gotOutput)
 			}

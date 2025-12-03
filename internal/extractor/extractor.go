@@ -7,13 +7,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/samcunliffe/bcmp/internal/parser"
+	o "github.com/samcunliffe/bcmp/internal/organiser"
+	p "github.com/samcunliffe/bcmp/internal/parser"
 )
-
-func trackDestinationPath(t parser.Track, destination string) string {
-	filename := fmt.Sprintf("%s%s", t.FullTrack, t.FileType)
-	return filepath.Join(destination, filename)
-}
 
 func processTrack(f *zip.File, destination string) error {
 	rc, err := f.Open()
@@ -22,13 +18,13 @@ func processTrack(f *zip.File, destination string) error {
 	}
 	defer rc.Close()
 
-	_, track, err := parser.ParseMusicFileName(f.Name)
+	_, track, err := p.ParseMusicFileName(f.Name)
 	if err != nil {
 		return fmt.Errorf("error parsing music file name %s: %v", f.Name, err)
 	}
 
 	// Actually extract and write the file
-	fd, err := os.Create(trackDestinationPath(track, destination))
+	fd, err := os.Create(o.TrackDestinationPath(track, destination))
 	if err != nil {
 		return fmt.Errorf("impossible to create destination file: %s", err)
 	}
@@ -60,7 +56,7 @@ func ExtractAndRename(zipPath, destination string) error {
 		}
 
 		// Ignore cover art for now
-		if parser.IsCoverArtFile(filepath.Base(f.Name)) {
+		if p.IsCoverArtFile(filepath.Base(f.Name)) {
 			fmt.Printf("Skipping: %s\n", f.Name)
 			continue
 		}

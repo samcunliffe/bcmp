@@ -46,3 +46,24 @@ func CheckFile(path string) error {
 	}
 	return nil
 }
+
+func TrackDestinationPath(t parser.Track, destination string) string {
+	filename := fmt.Sprintf("%s%s", t.FullTrack, t.FileType)
+	return filepath.Join(destination, filename)
+}
+
+func MoveAndRenameFile(sourcePath, destination string) error {
+	sourceFile := filepath.Base(sourcePath)
+	album, track, err := parser.ParseMusicFileName(sourceFile)
+	if err != nil {
+		return err
+	}
+
+	destination, err = CreateDestination(album, destination)
+	if err != nil {
+		return err
+	}
+
+	destinationPath := TrackDestinationPath(track, destination)
+	return os.Rename(sourcePath, destinationPath)
+}

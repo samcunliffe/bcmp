@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
@@ -27,12 +25,9 @@ var extractCmd = &cobra.Command{
 		destination, _ := cmd.Flags().GetString("destination")
 
 		zipFilePath := args[0]
-		fi, err := os.Stat(zipFilePath)
+		err := organiser.CheckFile(zipFilePath)
 		if err != nil {
-			return fmt.Errorf("error accessing zip file: %v", err)
-		}
-		if fi.IsDir() || fi.Size() == 0 {
-			return fmt.Errorf("the zip file: %v is not valid", fi.Name())
+			return err
 		}
 
 		album, err := parser.ParseZipFileName(filepath.Base(zipFilePath))

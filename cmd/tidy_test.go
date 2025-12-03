@@ -11,13 +11,13 @@ func TestTidyNoOp(t *testing.T) {
 
 	err := rootCmd.Execute()
 	if err == nil {
-		t.Errorf("Expected error for unimplemented tidy command, got nil")
+		t.Errorf("Expected error for tidy command, got nil")
 	}
 
 	want := "not implemented"
 	got := err.Error()
 
-	if strings.Contains(got, want) {
+	if !strings.Contains(got, want) {
 		t.Errorf("Expected error %q, got %q", want, got)
 	}
 }

@@ -47,10 +47,11 @@ func TestRootCmdHelp(t *testing.T) {
 		// Set the help flag as argument
 		args := []string{flag}
 		rootCmd.SetArgs(args)
-		defer rootCmd.SetArgs(nil)
+
 
 		// Actually execute the command - should show help without error
 		err := rootCmd.Execute()
+		rootCmd.SetArgs(nil)
 		if err != nil {
 			t.Errorf("Expected no error for help flag %s, got %v", flag, err)
 		}

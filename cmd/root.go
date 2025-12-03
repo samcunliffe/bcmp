@@ -26,7 +26,7 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Root().CompletionOptions.DisableDefaultCmd = true
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "enable verbose output")
 	rootCmd.PersistentFlags().BoolP("dry-run", "n", false, "print actions without making any changes")
 

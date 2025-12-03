@@ -68,7 +68,7 @@ func TestRootCmdHelp(t *testing.T) {
 
 func TestRootExecuteSmoke(t *testing.T) {
 	// Just ensure Execute runs without error
-	// A smoke test is better than notthing!
+	// A smoke test is better than nothing!
 	rootCmd.Execute()
 }
 

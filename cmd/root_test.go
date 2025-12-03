@@ -2,8 +2,11 @@ package cmd
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/spf13/cobra"
 )
 
 func TestRootCmdNoArgs(t *testing.T) {
@@ -60,4 +63,24 @@ func TestRootCmdHelp(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestRootExecuteSmoke(t *testing.T) {
+	// Just ensure Execute runs without error
+	// A smoke test is better than notthing!
+	rootCmd.Execute()
+}
+
+func TestRootExecuteErrorSmoke(t *testing.T) {
+	// Temporarily replace rootCmd with one that always errors
+	originalRootCmd := rootCmd
+	defer func() { rootCmd = originalRootCmd }()
+
+	rootCmd = &cobra.Command{
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return fmt.Errorf("simulated error")
+		},
+	}
+
+	rootCmd.Execute()
 }

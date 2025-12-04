@@ -66,12 +66,19 @@ func TestRootCmdHelp(t *testing.T) {
 }
 
 func TestRootExecuteSmoke(t *testing.T) {
-	// Just ensure Execute runs without error
-	// A smoke test is better than nothing!
-	rootCmd.Execute()
+	Execute()
 }
 
-func TestRootExecuteErrorSmoke(t *testing.T) {
+func TestRootExecuteError(t *testing.T) {
+
+	// Monkey patch osExit to prevent actual exit, record exit code
+	originalOsExit := osExit
+	defer func() { osExit = originalOsExit }()
+	got, want := 0, 1
+	osExit = func(code int) {
+		got = code
+	}
+
 	// Temporarily replace rootCmd with one that always errors
 	originalRootCmd := rootCmd
 	defer func() { rootCmd = originalRootCmd }()
@@ -82,5 +89,10 @@ func TestRootExecuteErrorSmoke(t *testing.T) {
 		},
 	}
 
-	rootCmd.Execute()
+	// Now run the function
+	Execute()
+
+	if got != want {
+		t.Errorf("Expected exit code: %d, got: %d", want, got)
+	}
 }

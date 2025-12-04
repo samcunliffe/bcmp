@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"io"
 	"os"
 	"runtime/debug"
 
@@ -8,12 +9,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Own osExit function to allow monkey-patching in tests.
 var osExit = os.Exit
 
+// The top-level command: `bcmp` itself.
 var rootCmd = &cobra.Command{
-	Use:     "bcmp",
-	Version: "v0.2.0",
-	Short:   "Extract and organise Bandcamp music files.",
+	Use:   "bcmp",
+	Short: "Extract and organise Bandcamp music files.",
 	Example: `# Run and extract music to $HOME/Music:
 bcmp extract "/path/to/bandcamp/downloads/Artist - Album Name.zip"
 
@@ -23,6 +25,7 @@ bcmp tidy "Artist - Album Name - 01 Song Title.flac"
 # To put files in some other location, use -d,--destination.`,
 }
 
+// Run the root-level command.
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -30,6 +33,12 @@ func Execute() {
 	}
 }
 
+// Allows command output to be redirected.
+func SetOut(newOut io.Writer) {
+	rootCmd.SetOut(newOut)
+}
+
+// Get the version from build info, or return "dev" if not available (local build).
 func getVersion() string {
 	info, ok := debug.ReadBuildInfo()
 	if ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
@@ -38,6 +47,7 @@ func getVersion() string {
 	return "dev"
 }
 
+// Initialise the root command.
 func init() {
 	rootCmd.Version = getVersion()
 

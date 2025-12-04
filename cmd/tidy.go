@@ -13,6 +13,9 @@ var tidyCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destination, _ := cmd.Flags().GetString("destination")
 		musicFile := args[0]
+		if err := organiser.CheckFile(musicFile); err != nil {
+			return err
+		}
 		return organiser.MoveAndRenameFile(musicFile, destination)
 	},
 }

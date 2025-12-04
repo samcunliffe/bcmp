@@ -29,7 +29,7 @@ bcmp tidy "Artist - Album Name - 01 Song Title.flac"
 func Execute() {
 	err := fang.Execute(context.Background(), rootCmd)
 	if err != nil {
-		os.Exit(1)
+		osExit(1)
 	}
 }
 

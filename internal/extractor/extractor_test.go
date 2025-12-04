@@ -103,4 +103,7 @@ func TestArchiveWithZipSlip(t *testing.T) {
 	if err == nil {
 		t.Fatal("Expected an error for zip slip vulnerability")
 	}
+	if !strings.Contains(err.Error(), "invalid file path") {
+		t.Errorf("Expected error about invalid file path, got: %v", err.Error())
+	}
 }

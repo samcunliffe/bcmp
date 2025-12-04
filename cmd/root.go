@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var osExit = os.Exit
+
 var rootCmd = &cobra.Command{
 	Use:     "bcmp",
 	Version: "v0.2.0",
@@ -24,7 +26,7 @@ bcmp tidy "Artist - Album Name - 01 Song Title.flac"
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		osExit(1)
 	}
 }
 

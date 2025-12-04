@@ -35,7 +35,7 @@ func IsCoverArtFile(name string) bool {
 
 func IsValidMusicFile(name string) bool {
 	for _, suffix := range validMusicFiles {
-		if strings.HasSuffix(name, suffix) {
+		if strings.HasSuffix(strings.ToLower(name), suffix) {
 			return true
 		}
 	}

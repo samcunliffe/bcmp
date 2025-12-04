@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"runtime/debug"
 
 	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/spf13/cobra"
@@ -27,7 +28,16 @@ func Execute() {
 	}
 }
 
+func getVersion() string {
+	info, ok := debug.ReadBuildInfo()
+	if ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return info.Main.Version
+	}
+	return "dev"
+}
 func init() {
+	rootCmd.Version = getVersion()
+
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	// rootCmd.PersistentFlags().Bool("verbose", false, "enable verbose output")
 	// rootCmd.PersistentFlags().BoolP("dry-run", "n", false, "print actions without making any changes")

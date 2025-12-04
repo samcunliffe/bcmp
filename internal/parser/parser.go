@@ -79,7 +79,7 @@ func ParseZipFileName(name string) (Album, error) {
 	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }
 
-func ParseMusicFileName(name string) (Track, error) {
+func ParseMusicFileName(name string) (Album, Track, error) {
 	// Trim valid music file suffixes; error if none found
 	suffixFound := ""
 	for _, suffix := range validMusicFiles {
@@ -90,24 +90,34 @@ func ParseMusicFileName(name string) (Track, error) {
 		}
 	}
 	if suffixFound == "" {
-		return Track{}, fmt.Errorf("filename does not have a valid music file suffix")
+		return Album{}, Track{}, fmt.Errorf("filename does not have a valid music file suffix")
 	}
 
 	// Should be two hyphens 'Artist - Album - XX Title'
 	if !strings.Contains(name, " - ") {
-		return Track{}, fmt.Errorf("filename does not contain ' - ' separator")
+		return Album{}, Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
 	if strings.Count(name, " - ") != 2 {
-		return Track{}, fmt.Errorf("expected two ' - ' separators: '%s'", name)
+		return Album{}, Track{}, fmt.Errorf("expected two ' - ' separators: '%s'", name)
 	}
 
 	// Split into artist, album, number, track title
-	_, albumAndTrack := splitOnHyphen(name)
-	_, track := splitOnHyphen(albumAndTrack)
-	number, title, err := extractNumberPrefix(track)
+	artist, albumAndTrack := splitOnHyphen(name)
+	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
+
+	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
+
+	number, songTitle, err := extractNumberPrefix(fullTrack)
 	if err != nil {
-		return Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
 	}
 
-	return Track{Number: number, Title: title, FullTrack: track, FileType: suffixFound}, nil
+	track := Track{
+		Number:    number,
+		Title:     songTitle,
+		FullTrack: fullTrack,
+		FileType:  suffixFound,
+	}
+
+	return album, track, nil
 }

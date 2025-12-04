@@ -1,17 +1,22 @@
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/spf13/cobra"
 )
 
 var tidyCmd = &cobra.Command{
-	Use:     "tidy",
-	Short:   "Not implemented :(",
+	Use:     "tidy <bandcamp music file> [flags]",
+	Short:   "Tidy away Bandcamp music files.",
+	Args:    cobra.ExactArgs(1),
 	Aliases: []string{"t"},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return fmt.Errorf("not implemented")
+		destination, _ := cmd.Flags().GetString("destination")
+		musicFile := args[0]
+		if err := organiser.CheckFile(musicFile); err != nil {
+			return err
+		}
+		return organiser.MoveAndRenameFile(musicFile, destination)
 	},
 }
 

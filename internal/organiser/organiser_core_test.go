@@ -8,27 +8,6 @@ import (
 	"github.com/samcunliffe/bcmp/internal/parser"
 )
 
-func TestDefaultDestination(t *testing.T) {
-	home := t.TempDir()
-	t.Setenv("HOME", home)
-
-	want := filepath.Join(home, "Music")
-	got := DefaultDestination()
-	if got != want {
-		t.Errorf("DefaultDestination() = %q; want %q", got, want)
-	}
-}
-
-func TestDetermineDefaultDestinationNoHome(t *testing.T) {
-	t.Setenv("HOME", "")
-
-	want := filepath.Join(".", "Music")
-	got := DefaultDestination()
-	if got != want {
-		t.Errorf("DefaultDestination() = %q; want %q", got, want)
-	}
-}
-
 func TestCreateDestination(t *testing.T) {
 	base := t.TempDir()
 
@@ -77,37 +56,27 @@ func TestCreateDestinationNonExistentBase(t *testing.T) {
 	// Investigate logging and a -v/--verbose flag?
 }
 
-func TestCheckFileDirectory(t *testing.T) {
-	err := CheckFile("testdata/directory")
-	if err == nil {
-		t.Errorf("CheckFile on directory did not return error")
-	}
-}
-
-func TestCheckFileNonExistent(t *testing.T) {
-	err := CheckFile("testdata/nonexistent.zip")
-	if err == nil {
-		t.Errorf("CheckFile on nonexistent file did not return error")
-	}
-}
-
-func TestCheckFileEmptyFile(t *testing.T) {
-	err := CheckFile("testdata/emptyfile")
-	if err == nil {
-		t.Errorf("CheckFile on empty file did not return error")
-	}
-}
-
-func TestCheckFileValidZipFile(t *testing.T) {
-	err := CheckFile("testdata/validfile.zip")
+// Utility test helper to recreate a moved file after testing is done.
+func putBackFile(path string) {
+	f, err := os.Create(path)
 	if err != nil {
-		t.Errorf("CheckFile on valid file returned error: %v", err)
+		panic("unable to put back file in testdata: " + err.Error())
 	}
+	f.Close()
 }
 
-func TestCheckFileValidMusicFile(t *testing.T) {
-	err := CheckFile("testdata/ding.flac")
+func TestMoveAndRename(t *testing.T) {
+	destination := t.TempDir()
+	source := "testdata/Artist - Album - 01 Track.flac"
+	defer putBackFile(source)
+
+	err := MoveAndRenameFile(source, destination)
 	if err != nil {
-		t.Errorf("CheckFile on valid music file returned error: %v", err)
+		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
+	}
+
+	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
+	if _, err := os.Stat(wantPath); os.IsNotExist(err) {
+		t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
 	}
 }

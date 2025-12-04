@@ -36,7 +36,7 @@ func CreateDestination(album parser.Album, base string) (string, error) {
 func CheckFile(path string) error {
 	fi, err := os.Stat(path)
 	if err != nil {
-		return fmt.Errorf("error accessing zip file: %v", err)
+		return err
 	}
 	if fi.IsDir() {
 		return fmt.Errorf("the path: %v is a directory, not a file", fi.Name())
@@ -45,4 +45,32 @@ func CheckFile(path string) error {
 		return fmt.Errorf("the file: %v is empty", fi.Name())
 	}
 	return nil
+}
+
+// Construct the full destination path for a track file
+//
+// Assumes the directory structure is correct, i.e. that CreateDestination has
+// been called.
+func TrackDestination(t parser.Track, destination string) string {
+	filename := fmt.Sprintf("%s%s", t.FullTrack, t.FileType)
+	return filepath.Join(destination, filename)
+}
+
+// Move and rename a single music file
+//
+// "Tidy" a single music file by moving it to the correct directory structure and
+// renaming it appropriately. This is the main function called by `bcmp tidy`.
+func MoveAndRenameFile(sourcePath, destination string) error {
+	sourceFile := filepath.Base(sourcePath)
+	album, track, err := parser.ParseMusicFileName(sourceFile)
+	if err != nil {
+		return err
+	}
+
+	destination, err = CreateDestination(album, destination)
+	if err != nil {
+		return err
+	}
+
+	return os.Rename(sourcePath, TrackDestination(track, destination))
 }

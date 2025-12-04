@@ -36,22 +36,30 @@ func TestParseMusicFileName(t *testing.T) {
 		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", 2, "Dark Clouds", "02 Dark Clouds", ".mp3"},
 		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
 	}
+	wantArtist := "Crypta"
+	wantAlbum := "Shades of Sorrow"
 	for _, testcase := range testCases {
-		got, err := ParseMusicFileName(testcase.inputFilename)
+		gotAlbum, gotTrack, err := ParseMusicFileName(testcase.inputFilename)
 		if err != nil {
 			t.Errorf("ParseMusicFileName(%q) returned error: %v", testcase.inputFilename, err)
 		}
-		if got.Number != testcase.wantNumber {
-			t.Errorf("ParseMusicFileName(%q) Number = %d; want %d", testcase.inputFilename, got.Number, testcase.wantNumber)
+		if gotAlbum.Artist != wantArtist {
+			t.Errorf("ParseMusicFileName(%q) Artist = %q; want %q", testcase.inputFilename, gotAlbum.Artist, wantArtist)
 		}
-		if got.Title != testcase.wantTitle {
-			t.Errorf("ParseMusicFileName(%q) Title = %q; want %q", testcase.inputFilename, got.Title, testcase.wantTitle)
+		if gotAlbum.Title != wantAlbum {
+			t.Errorf("ParseMusicFileName(%q) Album Title = %q; want %q", testcase.inputFilename, gotAlbum.Title, wantAlbum)
 		}
-		if got.FullTrack != testcase.wantTrack {
-			t.Errorf("ParseMusicFileName(%q) FullTrack = %q; want %q", testcase.inputFilename, got.FullTrack, testcase.wantTrack)
+		if gotTrack.Number != testcase.wantNumber {
+			t.Errorf("ParseMusicFileName(%q) Number = %d; want %d", testcase.inputFilename, gotTrack.Number, testcase.wantNumber)
 		}
-		if got.FileType != testcase.wantSuffix {
-			t.Errorf("ParseMusicFileName(%q) FileType = %q; want %q", testcase.inputFilename, got.FileType, testcase.wantSuffix)
+		if gotTrack.Title != testcase.wantTitle {
+			t.Errorf("ParseMusicFileName(%q) Title = %q; want %q", testcase.inputFilename, gotTrack.Title, testcase.wantTitle)
+		}
+		if gotTrack.FullTrack != testcase.wantTrack {
+			t.Errorf("ParseMusicFileName(%q) FullTrack = %q; want %q", testcase.inputFilename, gotTrack.FullTrack, testcase.wantTrack)
+		}
+		if gotTrack.FileType != testcase.wantSuffix {
+			t.Errorf("ParseMusicFileName(%q) FileType = %q; want %q", testcase.inputFilename, gotTrack.FileType, testcase.wantSuffix)
 		}
 	}
 }
@@ -68,7 +76,7 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Just the Song Title.flac",                                // Missing artist, album, track number
 	}
 	for _, filename := range errorCases {
-		_, err := ParseMusicFileName(filename)
+		_, _, err := ParseMusicFileName(filename)
 		if err == nil {
 			t.Errorf("ParseMusicFileName(%q) expected to return error, but got nil", filename)
 		}

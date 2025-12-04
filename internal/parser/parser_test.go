@@ -34,8 +34,7 @@ func TestIsValidMusicFile(t *testing.T) {
 		"Crypta - Shades of Sorrow - 01 The Aftermath",     // No file extension
 	}
 	for _, testcase := range testCases {
-		ok := IsValidMusicFile(testcase)
-		if ok {
+		if IsValidMusicFile(testcase) {
 			t.Errorf("IsValidMusicFile(%q) = true; want false", testcase)
 		}
 	}

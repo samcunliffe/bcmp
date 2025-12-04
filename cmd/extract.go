@@ -11,16 +11,10 @@ import (
 )
 
 var extractCmd = &cobra.Command{
-	Use:   "extract /path/to/Artist\\ -\\ Album\\ Name.zip [flags]",
-	Short: "Extract and tidy Bandcamp music files from a zip archive.",
-	Args:  cobra.ExactArgs(1),
-	// 	Long: `A longer description that spans multiple lines and likely contains examples
-	// and usage of using your command. For example:
-	//
-	// Cobra is a CLI library for Go that empowers applications.
-	// This application is a tool to generate the needed files
-	// to quickly create a Cobra application.`,
-	Aliases: []string{"x"},
+	Use:     "extract <bandcamp zip file> [flags]",
+	Short:   "Extract and tidy Bandcamp music from a zip archive.",
+	Args:    cobra.ExactArgs(1),
+	Aliases: []string{"xt"},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destination, _ := cmd.Flags().GetString("destination")
 

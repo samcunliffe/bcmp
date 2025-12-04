@@ -2,15 +2,15 @@ package cmd
 
 import (
 	"os"
+	"runtime/debug"
 
 	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "bcmp",
-	Version: "v0.2.0",
-	Short:   "Extract and organise Bandcamp music files.",
+	Use:   "bcmp",
+	Short: "Extract and organise Bandcamp music files.",
 	Example: `# Run and extract music to $HOME/Music:
 bcmp extract "/path/to/bandcamp/downloads/Artist - Album Name.zip"
 
@@ -27,7 +27,18 @@ func Execute() {
 	}
 }
 
+func getVersion() string {
+	info, ok := debug.ReadBuildInfo()
+	if ok && info.Main.Sum != "" {
+		return info.Main.Version
+	} else {
+		return "dev"
+	}
+}
+
 func init() {
+	rootCmd.Version = getVersion()
+
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	// rootCmd.PersistentFlags().Bool("verbose", false, "enable verbose output")
 	// rootCmd.PersistentFlags().BoolP("dry-run", "n", false, "print actions without making any changes")

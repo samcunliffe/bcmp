@@ -8,8 +8,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "bcmp",
-	Short: "Extract and organise Bandcamp music files.",
+	Use:     "bcmp",
+	Version: "v0.2.0",
+	Short:   "Extract and organise Bandcamp music files.",
 	Example: `# Run and extract music to $HOME/Music:
 bcmp extract "/path/to/bandcamp/downloads/Artist - Album Name.zip"
 
@@ -28,7 +29,7 @@ func Execute() {
 
 func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
-	// rootCmd.PersistentFlags().BoolP("verbose", "v", false, "enable verbose output")
+	// rootCmd.PersistentFlags().Bool("verbose", false, "enable verbose output")
 	// rootCmd.PersistentFlags().BoolP("dry-run", "n", false, "print actions without making any changes")
 
 	dd := organiser.DefaultDestination()

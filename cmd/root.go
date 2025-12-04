@@ -30,7 +30,7 @@ func Execute() {
 
 func getVersion() string {
 	info, ok := debug.ReadBuildInfo()
-	if ok && info.Main.Sum != "" {
+	if ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
 		return info.Main.Version
 	} else {
 		return "dev"

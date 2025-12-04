@@ -1,7 +1,6 @@
 package organiser
 
 import (
-	"os"
 	"path/filepath"
 	"testing"
 
@@ -27,54 +26,6 @@ func TestDetermineDefaultDestinationNoHome(t *testing.T) {
 	if got != want {
 		t.Errorf("DefaultDestination() = %q; want %q", got, want)
 	}
-}
-
-func TestCreateDestination(t *testing.T) {
-	base := t.TempDir()
-
-	testCases := []struct {
-		album parser.Album
-		want  string
-	}{
-		{
-			album: parser.Album{Artist: "Crypta", Title: "Shades of Sorrow"},
-			want:  filepath.Join(base, "Crypta", "Shades of Sorrow"),
-		},
-		{
-			album: parser.Album{Artist: "Orbit Culture", Title: "Death Above Life"},
-			want:  filepath.Join(base, "Orbit Culture", "Death Above Life"),
-		},
-	}
-
-	for _, testcase := range testCases {
-		got, err := CreateDestination(testcase.album, base)
-		if err != nil {
-			t.Errorf("CreateDestination(%v, %q) returned error: %v", testcase.album, base, err)
-			continue
-		}
-		if got != testcase.want {
-			t.Errorf("CreateDestination(%v, %q) = %q; want %q", testcase.album, base, got, testcase.want)
-		}
-		if _, err := os.Stat(got); os.IsNotExist(err) {
-			t.Errorf("CreateDestination did not create directory %q", got)
-		}
-	}
-}
-
-func TestCreateDestinationNonExistentBase(t *testing.T) {
-	base := filepath.Join(t.TempDir(), "some_nonexistent_subdir")
-
-	album := parser.Album{Artist: "Crypta", Title: "Shades of Sorrow"}
-	got, err := CreateDestination(album, base)
-	if err != nil {
-		t.Errorf("CreateDestination(%v, %q) returned error: %v", album, base, err)
-	}
-	want := filepath.Join(base, "Crypta", "Shades of Sorrow")
-	if got != want {
-		t.Errorf("CreateDestination(%v, %q) = %q; want %q", album, base, got, want)
-	}
-	// TODO: Might actually be better to do something else than write a warning to stdout...
-	// Investigate logging and a -v/--verbose flag?
 }
 
 func TestCheckFileDirectory(t *testing.T) {
@@ -112,7 +63,7 @@ func TestCheckFileValidMusicFile(t *testing.T) {
 	}
 }
 
-func TestTrackDestinationPath(t *testing.T) {
+func TestTrackDestination(t *testing.T) {
 	track := parser.Track{
 		Number:    1,
 		Title:     "First Track",
@@ -120,12 +71,12 @@ func TestTrackDestinationPath(t *testing.T) {
 		FileType:  ".flac",
 	}
 	want := "01 First Track.flac"
-	if TrackDestinationPath(track, "./") != want {
-		t.Errorf("TrackDestinationPath() = %q; want %q", TrackDestinationPath(track, "./"), want)
+	if TrackDestination(track, "./") != want {
+		t.Errorf("TrackDestinationPath() = %q; want %q", TrackDestination(track, "./"), want)
 	}
 }
 
-func TestTrackDestinationPathWeirdPaths(t *testing.T) {
+func TestTrackDestinationWeirdPaths(t *testing.T) {
 	track := parser.Track{
 		Number:    1,
 		Title:     "First Track",
@@ -143,7 +94,7 @@ func TestTrackDestinationPathWeirdPaths(t *testing.T) {
 	}
 
 	for _, testcase := range testCases {
-		got := TrackDestinationPath(track, testcase.input)
+		got := TrackDestination(track, testcase.input)
 		if got != testcase.want {
 			t.Errorf("TrackDestinationPath(_, %q) = %q; want %q", testcase.input, got, testcase.want)
 		}

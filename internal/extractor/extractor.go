@@ -24,7 +24,7 @@ func processTrack(f *zip.File, destination string) error {
 	}
 
 	// Actually extract and write the file
-	fd, err := os.Create(o.TrackDestinationPath(track, destination))
+	fd, err := os.Create(o.TrackDestination(track, destination))
 	if err != nil {
 		return fmt.Errorf("impossible to create destination file: %s", err)
 	}

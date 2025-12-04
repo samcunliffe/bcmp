@@ -36,7 +36,7 @@ func CreateDestination(album parser.Album, base string) (string, error) {
 func CheckFile(path string) error {
 	fi, err := os.Stat(path)
 	if err != nil {
-		return fmt.Errorf("error accessing zip file: %v", err)
+		return err
 	}
 	if fi.IsDir() {
 		return fmt.Errorf("the path: %v is a directory, not a file", fi.Name())
@@ -51,7 +51,7 @@ func CheckFile(path string) error {
 //
 // Assumes the directory structure is correct, i.e. that CreateDestination has
 // been called.
-func TrackDestinationPath(t parser.Track, destination string) string {
+func TrackDestination(t parser.Track, destination string) string {
 	filename := fmt.Sprintf("%s%s", t.FullTrack, t.FileType)
 	return filepath.Join(destination, filename)
 }
@@ -72,6 +72,5 @@ func MoveAndRenameFile(sourcePath, destination string) error {
 		return err
 	}
 
-	destinationPath := TrackDestinationPath(track, destination)
-	return os.Rename(sourcePath, destinationPath)
+	return os.Rename(sourcePath, TrackDestination(track, destination))
 }

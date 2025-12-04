@@ -34,12 +34,17 @@ To run over a zip file and organise to the default location (`$HOME/Music`) run:
 bcmp extract '/path/to/Downloads/Artist - Album.zip'
 ```
 
-To extract to some other location, use `-d,--destination`.
+To organise a single file to the default location:
+
+```sh
+bcmp tidy '/path/to/Downloads/Artist - Album - XX Song Title.flac'
+```
+
+To put files in some other location, use `-d,--destination`.
 
 ## Specification
 
 Music from Bandcamp is downloaded either as individual music files or as a zip archive of the whole album.
-Music-file tidying is under development.
 
 ### Zip archive
 
@@ -81,6 +86,6 @@ As this was a learning exercise, here are the things I used:
 
 ## Reuse
 
-This tool is released under [MIT-0](./LICENSE.md). Hopefully the code is useful to you, and no need to attribute it to me (you can if you like).
+This tool is released under [MIT-0](./LICENSE.md). Hopefully, the code is useful to you, and no need to attribute it to me (you can if you like).
 
 The Gopher logo is taken from [keygx/Go-gopher-Vector](https://github.com/keygx/Go-gopher-Vector), was originally designed by Renee French and released under [CC-by 3.0](https://creativecommons.org/licenses/by/3.0/). The Bandcamp logo is adapted from [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Bandcamp-logotype-aqua.svg). The `.flac` and `.zip` icons are [CC0](https://creativecommons.org/public-domain/cc0/).

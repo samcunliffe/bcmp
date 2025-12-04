@@ -1,11 +1,14 @@
 package cmd
 
 import (
+	"context"
 	"os"
 	"runtime/debug"
 
-	"github.com/samcunliffe/bcmp/internal/organiser"
+	"github.com/charmbracelet/fang"
 	"github.com/spf13/cobra"
+
+	"github.com/samcunliffe/bcmp/internal/organiser"
 )
 
 var osExit = os.Exit
@@ -24,9 +27,9 @@ bcmp tidy "Artist - Album Name - 01 Song Title.flac"
 }
 
 func Execute() {
-	err := rootCmd.Execute()
+	err := fang.Execute(context.Background(), rootCmd)
 	if err != nil {
-		osExit(1)
+		os.Exit(1)
 	}
 }
 

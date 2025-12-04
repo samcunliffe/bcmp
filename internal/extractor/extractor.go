@@ -14,7 +14,7 @@ import (
 // Performs safety checks on the zip file entry.
 func check(f *zip.File) error {
 	// Check that the file path is not suspicious - in any case we will extract
-	// it to the music directory ahd forget the path. But if we detect this then
+	// it to the music directory and forget the path. But if we detect this then
 	// stop processing as the zip file should be treated with caution.
 	//
 	// https://security.snyk.io/research/zip-slip-vulnerability

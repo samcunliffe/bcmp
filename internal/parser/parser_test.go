@@ -27,3 +27,16 @@ func TestIsCoverArtFile(t *testing.T) {
 		}
 	}
 }
+
+func TestIsValidMusicFile(t *testing.T) {
+	var testCases = []string{
+		"Crypta - Shades of Sorrow - 01 The Aftermath.txt", // Invalid file extension
+		"Crypta - Shades of Sorrow - 01 The Aftermath",     // No file extension
+	}
+	for _, testcase := range testCases {
+		ok := IsValidMusicFile(testcase)
+		if ok {
+			t.Errorf("IsValidMusicFile(%q) = true; want false", testcase)
+		}
+	}
+}

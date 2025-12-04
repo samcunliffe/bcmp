@@ -20,9 +20,27 @@ type Track struct {
 	FileType  string
 }
 
+var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
 var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
 
-var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
+func IsCoverArtFile(name string) bool {
+	lowerName := strings.ToLower(name)
+	for _, coverName := range coverArtFilenames {
+		if lowerName == coverName {
+			return true
+		}
+	}
+	return false
+}
+
+func IsValidMusicFile(name string) bool {
+	for _, suffix := range validMusicFiles {
+		if strings.HasSuffix(name, suffix) {
+			return true
+		}
+	}
+	return false
+}
 
 func splitOnHyphen(s string) (string, string) {
 	ss := strings.SplitN(s, " - ", 2)
@@ -49,16 +67,6 @@ func extractNumberPrefix(s string) (int, string, error) {
 		return -1, s, fmt.Errorf("failed to convert track number '%s' to int: %v", matches[1], err)
 	}
 	return number, strings.TrimSpace(matches[2]), nil
-}
-
-func IsCoverArtFile(name string) bool {
-	lowerName := strings.ToLower(name)
-	for _, coverName := range coverArtFilenames {
-		if lowerName == coverName {
-			return true
-		}
-	}
-	return false
 }
 
 func ParseZipFileName(name string) (Album, error) {

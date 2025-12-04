@@ -89,3 +89,18 @@ func TestArchiveOnlyDirectory(t *testing.T) {
 		t.Errorf("Expected error message about directories only, got: %v", err.Error())
 	}
 }
+
+// Test for Zip Slip vulnerability
+// https://security.snyk.io/research/zip-slip-vulnerability
+func TestArchiveWithZipSlip(t *testing.T) {
+	destination := t.TempDir()
+
+	// Archive contains file: '../../ive-escaped'
+	// which should not escape the destination directory
+	testfile := "testdata/archive-with-path-outside-slip.zip"
+
+	err := ExtractAndRename(testfile, destination)
+	if err == nil {
+		t.Fatal("Expected an error for zip slip vulnerability")
+	}
+}

@@ -62,6 +62,11 @@ func TrackDestination(t parser.Track, destination string) string {
 // renaming it appropriately. This is the main function called by `bcmp tidy`.
 func MoveAndRenameFile(sourcePath, destination string) error {
 	sourceFile := filepath.Base(sourcePath)
+
+	if !parser.IsValidMusicFile(sourceFile) {
+		return fmt.Errorf("file %s is not a valid music file", sourceFile)
+	}
+
 	album, track, err := parser.ParseMusicFileName(sourceFile)
 	if err != nil {
 		return err

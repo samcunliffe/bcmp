@@ -9,8 +9,9 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "bcmp",
-	Short: "Extract and organise Bandcamp music files.",
+	Use:     "bcmp",
+	Version: "v0.2.0",
+	Short:   "Extract and organise Bandcamp music files.",
 	Example: `# Run and extract music to $HOME/Music:
 bcmp extract "/path/to/bandcamp/downloads/Artist - Album Name.zip"
 

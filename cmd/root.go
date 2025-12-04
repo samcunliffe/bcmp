@@ -37,6 +37,7 @@ func getVersion() string {
 	}
 	return "dev"
 }
+
 func init() {
 	rootCmd.Version = getVersion()
 

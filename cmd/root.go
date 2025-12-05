@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime/debug"
 
+	cc "github.com/ivanpirog/coloredcobra"
 	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/spf13/cobra"
 )
@@ -57,4 +58,15 @@ func init() {
 
 	dd := organiser.DefaultDestination()
 	rootCmd.PersistentFlags().StringP("destination", "d", dd, "where to put music files")
+
+	cc.Init(&cc.Config{
+		RootCmd:         rootCmd,
+		ExecName:        cc.HiBlue + cc.Bold,
+		Headings:        cc.Green,
+		Commands:        cc.HiBlue + cc.Bold,
+		Aliases:         cc.HiBlue,
+		Flags:           cc.Yellow,
+		NoExtraNewlines: true,
+		NoBottomNewline: true,
+	})
 }

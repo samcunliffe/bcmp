@@ -29,13 +29,18 @@ func TestIsCoverArtFile(t *testing.T) {
 }
 
 func TestIsValidMusicFile(t *testing.T) {
-	var testCases = []string{
-		"Crypta - Shades of Sorrow - 01 The Aftermath.txt", // Invalid file extension
-		"Crypta - Shades of Sorrow - 01 The Aftermath",     // No file extension
+	var testCases = []struct {
+		input string
+		want  bool
+	}{
+		{"Crypta - Shades of Sorrow - 01 The Aftermath.txt", false}, // Invalid file extension
+		{"Crypta - Shades of Sorrow - 01 The Aftermath", false},     // No file extension
+		{"Crypta - Shades of Sorrow - 01 The Aftermath.mp3", true},  // Valid files
+		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", true},
 	}
 	for _, testcase := range testCases {
-		if IsValidMusicFile(testcase) {
-			t.Errorf("IsValidMusicFile(%q) = true; want false", testcase)
+		if IsValidMusicFile(testcase.input) != testcase.want {
+			t.Errorf("IsValidMusicFile(%q) = %v", testcase.input, !testcase.want)
 		}
 	}
 }

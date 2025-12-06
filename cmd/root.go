@@ -54,6 +54,7 @@ func init() {
 	rootCmd.CompletionOptions.DisableDefaultCmd = true
 	// rootCmd.PersistentFlags().Bool("verbose", false, "enable verbose output")
 	// rootCmd.PersistentFlags().BoolP("dry-run", "n", false, "print actions without making any changes")
+	rootCmd.PersistentFlags().BoolP("title-case", "t", false, "attempt to convert to title case")
 
 	dd := organiser.DefaultDestination()
 	rootCmd.PersistentFlags().StringP("destination", "d", dd, "where to put music files")

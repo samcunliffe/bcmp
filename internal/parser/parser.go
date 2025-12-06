@@ -5,7 +5,15 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
+
+var Config = struct {
+	TitleCase bool
+	Debug     bool
+}{false, false}
 
 type Album struct {
 	Artist string
@@ -40,6 +48,20 @@ func IsValidMusicFile(name string) bool {
 		}
 	}
 	return false
+}
+
+func toTitleCase(s string) string {
+	smallWords := " a an and as at but by for from if in nor of on or the to v von vs "
+	words := strings.Split(s, " ")
+	for i, word := range words {
+		lowerPaddedWord := " " + strings.ToLower(word) + " "
+		if i != 0 && strings.Contains(smallWords, lowerPaddedWord) {
+			words[i] = strings.ToLower(word)
+		} else {
+			words[i] = cases.Title(language.English).String(word)
+		}
+	}
+	return strings.Join(words, " ")
 }
 
 func splitOnHyphen(s string) (string, string) {
@@ -84,6 +106,10 @@ func ParseZipFileName(name string) (Album, error) {
 		return Album{}, fmt.Errorf("expected only one ' - ' separator: '%s'", name)
 	}
 	artist, album := splitOnHyphen(name)
+	if Config.TitleCase {
+		artist = toTitleCase(artist)
+		album = toTitleCase(album)
+	}
 	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }
 
@@ -112,6 +138,13 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
+
+	// Convert to title case if configured
+	if Config.TitleCase {
+		artist = toTitleCase(artist)
+		albumTitle = toTitleCase(albumTitle)
+		fullTrack = toTitleCase(fullTrack)
+	}
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 

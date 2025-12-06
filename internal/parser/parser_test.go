@@ -2,6 +2,23 @@ package parser
 
 import "testing"
 
+func TestParserConfig(t *testing.T) {
+	// Defaults should be false
+	if Config.TitleCase {
+		t.Errorf("Expected default TitleCase to be false, got %v", Config.TitleCase)
+	}
+	if Config.Debug {
+		t.Errorf("Expected default Debug to be false, got %v", Config.Debug)
+	}
+
+	// Sanity check that we can set a value
+	Config.TitleCase = true
+	defer func() { Config.TitleCase = false }()
+	if !Config.TitleCase {
+		t.Errorf("Expected TitleCase to be true after setting, got %v", Config.TitleCase)
+	}
+}
+
 func TestIsCoverArtFile(t *testing.T) {
 	var testCases = []struct {
 		input string

@@ -10,6 +10,11 @@ import (
 	"golang.org/x/text/language"
 )
 
+var Config = struct {
+	TitleCase bool
+	Debug     bool
+}{false, false}
+
 type Album struct {
 	Artist string
 	Title  string
@@ -101,6 +106,10 @@ func ParseZipFileName(name string) (Album, error) {
 		return Album{}, fmt.Errorf("expected only one ' - ' separator: '%s'", name)
 	}
 	artist, album := splitOnHyphen(name)
+	if Config.TitleCase {
+		artist = toTitleCase(artist)
+		album = toTitleCase(album)
+	}
 	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }
 
@@ -129,6 +138,13 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
+
+	// Convert to title case if configured
+	if Config.TitleCase {
+		artist = toTitleCase(artist)
+		albumTitle = toTitleCase(albumTitle)
+		fullTrack = toTitleCase(fullTrack)
+	}
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 

@@ -2,9 +2,6 @@ package parser
 
 import "testing"
 
-// func TestSplitOnHyphen(t *testing.T)
-// func TestRemoveParenthesis(t *testing.T)
-
 func TestIsCoverArtFile(t *testing.T) {
 	var testCases = []struct {
 		input string
@@ -41,6 +38,27 @@ func TestIsValidMusicFile(t *testing.T) {
 	for _, testcase := range testCases {
 		if IsValidMusicFile(testcase.input) != testcase.want {
 			t.Errorf("IsValidMusicFile(%q) = %v", testcase.input, !testcase.want)
+		}
+	}
+}
+
+func TestToTitleCase(t *testing.T) {
+	var testCases = []struct {
+		input string
+		want  string
+	}{
+		{"SYLOSIS", "Sylosis"},                                   // Made up word
+		{"ROSALÍA - SAOKO", "Rosalía - Saoko"},                   // With accent
+		{"IVAR BJØRNSON", "Ivar Bjørnson"},                       // Scandinavian letter
+		{"THE OTHER SIDE OF ANGER", "The Other Side of Anger"},   // 'Small' word
+		{"THE BEGINNING OF THE END", "The Beginning of the End"}, // Multiple 'small' words
+		{"BABYMETAL - メギツネ", "Babymetal - メギツネ"},                 // Katakana
+		{"BABYMETAL - SONG 4 (4の歌)", "Babymetal - Song 4 (4の歌)"}, // Hiragana and Kanji
+	}
+	for _, testcase := range testCases {
+		got := toTitleCase(testcase.input)
+		if got != testcase.want {
+			t.Errorf("toTitleCase(%q) = %q; want %q", testcase.input, got, testcase.want)
 		}
 	}
 }

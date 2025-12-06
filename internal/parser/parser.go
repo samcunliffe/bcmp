@@ -5,6 +5,9 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type Album struct {
@@ -40,6 +43,20 @@ func IsValidMusicFile(name string) bool {
 		}
 	}
 	return false
+}
+
+func toTitleCase(s string) string {
+	smallWords := " a an and as at but by for if in nor of on or the to v von vs "
+	words := strings.Split(s, " ")
+	for i, word := range words {
+		lowerPaddedWord := " " + strings.ToLower(word) + " "
+		if i != 0 && strings.Contains(smallWords, lowerPaddedWord) {
+			words[i] = strings.ToLower(word)
+		} else {
+			words[i] = cases.Title(language.English).String(word)
+		}
+	}
+	return strings.Join(words, " ")
 }
 
 func splitOnHyphen(s string) (string, string) {

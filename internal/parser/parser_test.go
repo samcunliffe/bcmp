@@ -50,8 +50,10 @@ func TestToTitleCase(t *testing.T) {
 		{"SYLOSIS", "Sylosis"},                                   // Made up word
 		{"ROSALÍA - SAOKO", "Rosalía - Saoko"},                   // With accent
 		{"IVAR BJØRNSON", "Ivar Bjørnson"},                       // Scandinavian letter
-		{"THE OTHER SIDE OF ANGER", "The Other Side of Anger"},   // 'Small' word
+		{"THE OTHER SIDE OF ANGER", "The Other Side of Anger"},   // 'Small' word from UPPER
+		{"bleed from within", "Bleed from Within"},               // 'Small' word from lower
 		{"THE BEGINNING OF THE END", "The Beginning of the End"}, // Multiple 'small' words
+		{"the end of all we know", "The End of All We Know"},     // Multiple 'small' words
 		{"BABYMETAL - メギツネ", "Babymetal - メギツネ"},                 // Katakana
 		{"BABYMETAL - SONG 4 (4の歌)", "Babymetal - Song 4 (4の歌)"}, // Hiragana and Kanji
 	}

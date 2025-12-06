@@ -46,7 +46,7 @@ func IsValidMusicFile(name string) bool {
 }
 
 func toTitleCase(s string) string {
-	smallWords := " a an and as at but by for if in nor of on or the to v von vs "
+	smallWords := " a an and as at but by for from if in nor of on or the to v von vs "
 	words := strings.Split(s, " ")
 	for i, word := range words {
 		lowerPaddedWord := " " + strings.ToLower(word) + " "

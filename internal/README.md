@@ -10,6 +10,7 @@ classDiagram
     checker <|-- organiser
     parser <|-- checker
     parser <|-- organiser
+    organiser <|-- extractor
     organiser <|-- cmd.tidy
     extractor <|-- cmd.extract
     cmd.extract <|-- cmd.root

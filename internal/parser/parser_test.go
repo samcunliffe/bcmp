@@ -2,6 +2,26 @@ package parser
 
 import "testing"
 
+func TestExtension(t *testing.T) {
+	var testCases = []struct {
+		input string
+		want  string
+	}{
+		{"song.flac", ".flac"},
+		{"song.mp3", ".mp3"},
+		{"song.ogg", ".ogg"},
+		{"archive.zip", ".zip"},
+		{"no_extension", ""},
+		{"multiple.dots.in.name.txt", ".txt"},
+	}
+	for _, testcase := range testCases {
+		got := Extension(testcase.input)
+		if got != testcase.want {
+			t.Errorf("Extension(%q) = %q; want %q", testcase.input, got, testcase.want)
+		}
+	}
+}
+
 func TestParserConfig(t *testing.T) {
 	// Defaults should be false
 	if Config.TitleCase {

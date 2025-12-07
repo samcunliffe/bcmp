@@ -29,7 +29,7 @@ type Track struct {
 }
 
 var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
-var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
+var validMusicFiles = []string{".flac", ".mp3", ".ogg", ".FLAC", ".MP3", ".OGG"}
 
 func IsCoverArtFile(name string) bool {
 	lowerName := strings.ToLower(name)
@@ -120,7 +120,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	for _, suffix := range validMusicFiles {
 		if strings.HasSuffix(name, suffix) {
 			name = strings.TrimSuffix(name, suffix)
-			suffixFound = suffix
+			suffixFound = strings.ToLower(suffix)
 			break
 		}
 	}
@@ -144,7 +144,6 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	if Config.TitleCase {
 		artist = toTitleCase(artist)
 		albumTitle = toTitleCase(albumTitle)
-		fullTrack = toTitleCase(fullTrack)
 	}
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
@@ -152,6 +151,11 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	number, songTitle, err := extractNumberPrefix(fullTrack)
 	if err != nil {
 		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+	}
+
+	if Config.TitleCase {
+		songTitle = toTitleCase(songTitle)
+		fullTrack = fmt.Sprintf("%02d %s", number, songTitle)
 	}
 
 	track := Track{

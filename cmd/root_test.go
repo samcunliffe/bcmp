@@ -12,7 +12,7 @@ import (
 func TestRootCmdNoArgs(t *testing.T) {
 	// Buffer to capture output
 	buf := &bytes.Buffer{}
-	rootCmd.SetOut(buf)
+	SetOut(buf)
 
 	// Actually execute the command with no args - should show description and usage
 	err := rootCmd.Execute()
@@ -42,7 +42,7 @@ func TestRootCmdHelp(t *testing.T) {
 	for _, flag := range helpFlags {
 		// Buffer to capture output
 		buf := &bytes.Buffer{}
-		rootCmd.SetOut(buf)
+		SetOut(buf)
 
 		// Set the help flag as argument
 		args := []string{flag}

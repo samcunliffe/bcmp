@@ -60,7 +60,7 @@ func TrackDestination(t parser.Track, destination string) string {
 //
 // "Tidy" a single music file by moving it to the correct directory structure and
 // renaming it appropriately. This is the main function called by `bcmp tidy`.
-func MoveAndRenameFile(sourcePath, destination string) error {
+func moveAndRenameFile(sourcePath, destination string) error {
 	sourceFile := filepath.Base(sourcePath)
 
 	if !parser.IsValidMusicFile(sourceFile) {
@@ -78,4 +78,11 @@ func MoveAndRenameFile(sourcePath, destination string) error {
 	}
 
 	return os.Rename(sourcePath, TrackDestination(track, destination))
+}
+
+func Tidy(musicFile, destination string) error {
+	if err := CheckFile(musicFile); err != nil {
+		return err
+	}
+	return moveAndRenameFile(musicFile, destination)
 }

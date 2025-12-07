@@ -70,7 +70,7 @@ func TestMoveAndRename(t *testing.T) {
 	source := "testdata/Artist - Album - 01 Track.flac"
 	defer putBackFile(source)
 
-	err := MoveAndRenameFile(source, destination)
+	err := moveAndRenameFile(source, destination)
 	if err != nil {
 		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
 	}

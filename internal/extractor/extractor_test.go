@@ -7,12 +7,12 @@ import (
 	"testing"
 )
 
-func TestExtractAndRename(t *testing.T) {
+func TestUnzipAndRename(t *testing.T) {
 
 	destination := t.TempDir()
 	testfile := "testdata/Artist - Album.zip"
 
-	err := ExtractAndRename(testfile, destination)
+	err := unzipAndRename(testfile, destination)
 	if err != nil {
 		t.Fatalf("ExtractAndRename returned an error: %v", err)
 	}
@@ -35,7 +35,7 @@ func TestEmptyArchive(t *testing.T) {
 	destination := t.TempDir()
 	testfile := "testdata/empty.zip"
 
-	err := ExtractAndRename(testfile, destination)
+	err := unzipAndRename(testfile, destination)
 	if err == nil {
 		t.Errorf("Expected an error for an empty archive")
 	}
@@ -48,7 +48,7 @@ func TestInvalidArchive(t *testing.T) {
 	destination := t.TempDir()
 	testfile := "testdata/one-file-no-music.zip"
 
-	err := ExtractAndRename(testfile, destination)
+	err := unzipAndRename(testfile, destination)
 	if err == nil {
 		t.Fatal("Expected an error for an invalid archive")
 	}
@@ -68,7 +68,7 @@ func TestNoFilePermissions(t *testing.T) {
 	}
 	defer os.Chmod(destination, 0755) // Restore permissions after test
 
-	err = ExtractAndRename(testfile, destination)
+	err = unzipAndRename(testfile, destination)
 	if err == nil {
 		t.Fatal("Expected an error due to lack of write permissions")
 	}
@@ -81,7 +81,7 @@ func TestArchiveOnlyDirectory(t *testing.T) {
 	destination := t.TempDir()
 	testfile := "testdata/no-files-only-directories.zip"
 
-	err := ExtractAndRename(testfile, destination)
+	err := unzipAndRename(testfile, destination)
 	if err == nil {
 		t.Fatal("Expected an error for archive with only directories")
 	}
@@ -99,7 +99,7 @@ func TestArchiveWithZipSlip(t *testing.T) {
 	// which should not escape the destination directory
 	testfile := "testdata/archive-with-path-outside-slip.zip"
 
-	err := ExtractAndRename(testfile, destination)
+	err := unzipAndRename(testfile, destination)
 	if err == nil {
 		t.Fatal("Expected an error for zip slip vulnerability")
 	}

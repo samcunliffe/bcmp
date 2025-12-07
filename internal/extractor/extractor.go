@@ -64,7 +64,7 @@ func processTrack(f *zip.File, destination string) error {
 	return nil
 }
 
-func ExtractAndRename(zipPath, destination string) error {
+func unzipAndRename(zipPath, destination string) error {
 	// Open zip archive for reading.
 	rc, err := zip.OpenReader(zipPath)
 	if err != nil {
@@ -92,4 +92,25 @@ func ExtractAndRename(zipPath, destination string) error {
 		}
 	}
 	return nil
+}
+
+// Extract tracks from a Bandcamp zip file and rename them appropriately
+// The functon called by `bcmp extract`. Does all checking then calls extractAndRename.
+func Extract(zipFilePath, destination string) error {
+	err := o.CheckFile(zipFilePath)
+	if err != nil {
+		return err
+	}
+
+	album, err := p.ParseZipFileName(filepath.Base(zipFilePath))
+	if err != nil {
+		return err
+	}
+
+	destination, err = o.CreateDestination(album, destination)
+	if err != nil {
+		return err
+	}
+
+	return unzipAndRename(zipFilePath, destination)
 }

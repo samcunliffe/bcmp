@@ -76,9 +76,18 @@ func IsValidMusicFile(name string) bool {
 func toTitleCase(s string) string {
 	smallWords := " a an and as at but by for from if in nor of on or the to v von vs "
 	words := strings.Split(s, " ")
+
+	// The first word in the string might be a track number:
+	// "01 The Beginning of the End"
+	// -> ignore "01" -> the first word is "The", capitalize
+	firstWord := 0
+	if hasTrackNumber(s) {
+		firstWord = 1
+	}
+
 	for i, word := range words {
 		lowerPaddedWord := " " + strings.ToLower(word) + " "
-		if i != 0 && strings.Contains(smallWords, lowerPaddedWord) {
+		if i > firstWord && strings.Contains(smallWords, lowerPaddedWord) {
 			words[i] = strings.ToLower(word)
 		} else {
 			words[i] = cases.Title(language.English).String(word)
@@ -112,6 +121,11 @@ func numberPrefix(s string) (int, string, error) {
 		return -1, s, fmt.Errorf("failed to convert track number '%s' to int: %v", matches[1], err)
 	}
 	return number, strings.TrimSpace(matches[2]), nil
+}
+
+func hasTrackNumber(s string) bool {
+	re := regexp.MustCompile(`^(\d+)\s+.*`)
+	return re.MatchString(s)
 }
 
 func ParseZipFileName(name string) (Album, error) {
@@ -157,6 +171,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	if Config.TitleCase {
 		artist = toTitleCase(artist)
 		albumTitle = toTitleCase(albumTitle)
+		fullTrack = toTitleCase(fullTrack)
 	}
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
@@ -164,11 +179,6 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	number, songTitle, err := numberPrefix(fullTrack)
 	if err != nil {
 		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
-	}
-
-	if Config.TitleCase {
-		songTitle = toTitleCase(songTitle)
-		fullTrack = fmt.Sprintf("%02d %s", number, songTitle)
 	}
 
 	track := Track{

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/samcunliffe/bcmp/internal/organiser"
+	"github.com/samcunliffe/bcmp/internal/parser"
 	"github.com/spf13/cobra"
 )
 
@@ -12,11 +13,9 @@ var tidyCmd = &cobra.Command{
 	Aliases: []string{"t"},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destination, _ := cmd.Flags().GetString("destination")
+		parser.Config.TitleCase, _ = cmd.Flags().GetBool("title-case")
 		musicFile := args[0]
-		if err := organiser.CheckFile(musicFile); err != nil {
-			return err
-		}
-		return organiser.MoveAndRenameFile(musicFile, destination)
+		return organiser.Tidy(musicFile, destination)
 	},
 }
 

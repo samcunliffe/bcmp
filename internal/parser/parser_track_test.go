@@ -27,19 +27,28 @@ func TestExtractNumberPrefix(t *testing.T) {
 func TestParseMusicFileName(t *testing.T) {
 	var testCases = []struct {
 		inputFilename string
+		titleCaseCfg  bool
 		wantNumber    int
 		wantTitle     string
 		wantTrack     string
 		wantSuffix    string
 	}{
-		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", 1, "The Aftermath", "01 The Aftermath", ".flac"},
-		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", 2, "Dark Clouds", "02 Dark Clouds", ".mp3"},
-		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
+		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", false, 1, "The Aftermath", "01 The Aftermath", ".flac"},
+		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", false, 2, "Dark Clouds", "02 Dark Clouds", ".mp3"},
+		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", false, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
+		{"crypta - shades of sorrow - 06 the other side of anger.flac", true, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".flac"},
+		{"CRYPTA - SHADES OF SORROW - 12 LORD OF RUINS.MP3", true, 12, "Lord of Ruins", "12 Lord of Ruins", ".mp3"},
 	}
 	wantArtist := "Crypta"
 	wantAlbum := "Shades of Sorrow"
 	for _, testcase := range testCases {
+
+		// if we're also testing the title case flag
+		if testcase.titleCaseCfg {
+			Config.TitleCase = true
+		}
 		gotAlbum, gotTrack, err := ParseMusicFileName(testcase.inputFilename)
+		Config.TitleCase = false // reset after test execution
 		if err != nil {
 			t.Errorf("ParseMusicFileName(%q) returned error: %v", testcase.inputFilename, err)
 		}
@@ -66,6 +75,7 @@ func TestParseMusicFileName(t *testing.T) {
 
 func TestParseMusicFilenameErrors(t *testing.T) {
 	var errorCases = []string{
+		"Crypta - Shades of Sorrow - 01 The Aftermath.txt",        // Invalid file extension
 		"Crypta - Shades of Sorrow - The Aftermath.flac",          // Missing track number
 		"Crypta - Shades of Sorrow - 00 The Aftermath.flac",       // Track zero
 		"Crypta - Shades of Sorrow - Track One The Aftermath.mp3", // Non-numeric track number

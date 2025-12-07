@@ -14,7 +14,7 @@ func TestExtractNumberPrefix(t *testing.T) {
 		{"12 Lord of Ruins", 12, "Lord of Ruins"},
 	}
 	for _, testcase := range testCases {
-		n, s, err := extractNumberPrefix(testcase.input_track)
+		n, s, err := numberPrefix(testcase.input_track)
 		if err != nil {
 			t.Errorf("extractNumberPrefix returned error for %q: %v", testcase.input_track, err)
 		}

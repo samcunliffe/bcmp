@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -13,7 +14,7 @@ import (
 var Config = struct {
 	TitleCase bool
 	Debug     bool
-}{false, false}
+}{}
 
 type Album struct {
 	Artist string
@@ -29,21 +30,43 @@ type Track struct {
 }
 
 var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
-var validMusicFiles = []string{".flac", ".mp3", ".ogg", ".FLAC", ".MP3", ".OGG"}
+var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
 
+// Get the filename and its extenstion in lower case
+func splitNameAndExtension(s string) (string, string) {
+	extension := filepath.Ext(s)
+	name := strings.TrimSuffix(s, extension)
+	return name, strings.ToLower(extension)
+}
+
+// Get only the extension of a filename in lower case
+func extension(s string) string {
+	_, ext := splitNameAndExtension(s)
+	return ext
+}
+
+// Is the file a zip archive?
+func isZipFile(s string) bool {
+	return extension(s) == ".zip"
+}
+
+// Is the file a known cover art file?
 func IsCoverArtFile(name string) bool {
-	lowerName := strings.ToLower(name)
+	name = strings.ToLower(name)
 	for _, coverName := range coverArtFilenames {
-		if lowerName == coverName {
+		if name == coverName {
 			return true
 		}
 	}
 	return false
 }
 
+// Is the file a known (supported) music file?
 func IsValidMusicFile(name string) bool {
-	for _, suffix := range validMusicFiles {
-		if strings.HasSuffix(strings.ToLower(name), suffix) {
+	ext := extension(name)
+
+	for _, fileType := range validMusicFiles {
+		if ext == fileType {
 			return true
 		}
 	}
@@ -74,7 +97,7 @@ func removeParenthesis(s string) string {
 	return strings.TrimSpace(re.ReplaceAllString(s, ""))
 }
 
-func extractNumberPrefix(s string) (int, string, error) {
+func numberPrefix(s string) (int, string, error) {
 	re := regexp.MustCompile(`^(\d+)\s*(.*)`)
 
 	// Expect "XX Track Name", "XX", "Track Name"
@@ -92,12 +115,10 @@ func extractNumberPrefix(s string) (int, string, error) {
 }
 
 func ParseZipFileName(name string) (Album, error) {
-	// Trim the .zip suffix
-	if !strings.HasSuffix(name, ".zip") && !strings.HasSuffix(name, ".ZIP") {
-		return Album{}, fmt.Errorf("filename does not have .zip suffix")
+	if !isZipFile(name) {
+		return Album{}, fmt.Errorf("file is not a zip archive")
 	}
-	name = strings.TrimSuffix(name, ".zip")
-	name = strings.TrimSuffix(name, ".ZIP")
+	name, _ = splitNameAndExtension(name)
 
 	// Split into artist and album
 	if !strings.Contains(name, " - ") {
@@ -115,18 +136,10 @@ func ParseZipFileName(name string) (Album, error) {
 }
 
 func ParseMusicFileName(name string) (Album, Track, error) {
-	// Trim valid music file suffixes; error if none found
-	suffixFound := ""
-	for _, suffix := range validMusicFiles {
-		if strings.HasSuffix(name, suffix) {
-			name = strings.TrimSuffix(name, suffix)
-			suffixFound = strings.ToLower(suffix)
-			break
-		}
+	if !IsValidMusicFile(name) {
+		return Album{}, Track{}, fmt.Errorf("file is not a valid music file")
 	}
-	if suffixFound == "" {
-		return Album{}, Track{}, fmt.Errorf("filename does not have a valid music file suffix")
-	}
+	name, fileType := splitNameAndExtension(name)
 
 	// Should be two hyphens 'Artist - Album - XX Title'
 	if !strings.Contains(name, " - ") {
@@ -148,7 +161,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
-	number, songTitle, err := extractNumberPrefix(fullTrack)
+	number, songTitle, err := numberPrefix(fullTrack)
 	if err != nil {
 		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
 	}
@@ -162,7 +175,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		Number:    number,
 		Title:     songTitle,
 		FullTrack: fullTrack,
-		FileType:  suffixFound,
+		FileType:  fileType,
 	}
 
 	return album, track, nil

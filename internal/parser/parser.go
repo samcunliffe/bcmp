@@ -93,10 +93,11 @@ func extractNumberPrefix(s string) (int, string, error) {
 
 func ParseZipFileName(name string) (Album, error) {
 	// Trim the .zip suffix
-	if !strings.HasSuffix(name, ".zip") {
+	if !strings.HasSuffix(name, ".zip") && !strings.HasSuffix(name, ".ZIP") {
 		return Album{}, fmt.Errorf("filename does not have .zip suffix")
 	}
 	name = strings.TrimSuffix(name, ".zip")
+	name = strings.TrimSuffix(name, ".ZIP")
 
 	// Split into artist and album
 	if !strings.Contains(name, " - ") {

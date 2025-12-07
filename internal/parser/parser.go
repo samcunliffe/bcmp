@@ -32,7 +32,7 @@ type Track struct {
 var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
 var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
 
-// Get the filename and its extenstion in lower case
+// Get the filename and its extension in lower case
 func splitNameAndExtension(s string) (string, string) {
 	extension := filepath.Ext(s)
 	name := strings.TrimSuffix(s, extension)

@@ -59,7 +59,7 @@ func TrackDestination(t parser.Track, destination string) string {
 // Move and rename a single music file
 //
 // "Tidy" a single music file by moving it to the correct directory structure and
-// renaming it appropriately. This is the main function called by `bcmp tidy`.
+// renaming it appropriately. This is a private helper function used by Tidy.
 func moveAndRenameFile(sourcePath, destination string) error {
 	sourceFile := filepath.Base(sourcePath)
 
@@ -80,6 +80,7 @@ func moveAndRenameFile(sourcePath, destination string) error {
 	return os.Rename(sourcePath, TrackDestination(track, destination))
 }
 
+// Tidy checks a music file and moves it to the correct directory structure.
 func Tidy(musicFile, destination string) error {
 	if err := CheckFile(musicFile); err != nil {
 		return err

@@ -95,7 +95,7 @@ func unzipAndRename(zipPath, destination string) error {
 }
 
 // Extract tracks from a Bandcamp zip file and rename them appropriately
-// The functon called by `bcmp extract`. Does all checking then calls extractAndRename.
+// The function called by `bcmp extract`. Does all checking then calls unzipAndRename.
 func Extract(zipFilePath, destination string) error {
 	err := o.CheckFile(zipFilePath)
 	if err != nil {

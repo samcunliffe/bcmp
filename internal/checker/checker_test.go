@@ -90,6 +90,9 @@ func TestCheckFileEmptyFile(t *testing.T) {
 	if err == nil {
 		t.Errorf("CheckFile on empty file did not return error")
 	}
+	if !strings.Contains(err.Error(), "is empty") {
+		t.Errorf("CheckFile on empty file returned wrong error: %v", err)
+	}
 }
 
 func TestCheckFileValidZipFile(t *testing.T) {

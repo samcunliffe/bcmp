@@ -7,24 +7,25 @@ import (
 	"testing"
 )
 
-func TestUnzipAndRename(t *testing.T) {
+func TestExtract(t *testing.T) {
 
 	destination := t.TempDir()
 	testfile := "testdata/Artist - Album.zip"
 
-	err := unzipAndRename(testfile, destination)
+	err := Extract(testfile, destination)
 	if err != nil {
 		t.Fatalf("ExtractAndRename returned an error: %v", err)
 	}
 
 	// Check that expected files exist
+	wantDestination := filepath.Join(destination, "Artist", "Album")
 	wantFiles := []string{
 		"01 First Track.flac",
 		"02 Second Track.flac",
 		"03 Third Track.flac",
 	}
 	for _, wantFile := range wantFiles {
-		wantPath := filepath.Join(destination, wantFile)
+		wantPath := filepath.Join(wantDestination, wantFile)
 		if _, err := os.Stat(wantPath); os.IsNotExist(err) {
 			t.Errorf("Expected file %s does not exist after extraction", wantPath)
 		}

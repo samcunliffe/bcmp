@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	c "github.com/samcunliffe/bcmp/internal/checker"
 	o "github.com/samcunliffe/bcmp/internal/organiser"
 	p "github.com/samcunliffe/bcmp/internal/parser"
 )
@@ -27,7 +28,7 @@ func check(f *zip.File) error {
 		return fmt.Errorf("archive contains a directory, not a valid bandcamp zip")
 	}
 
-	if !p.IsValidMusicFile(filepath.Base(f.Name)) {
+	if !c.IsValidMusicFile(filepath.Base(f.Name)) {
 		return fmt.Errorf("filename does not have a valid music file suffix: %s", f.Name)
 	}
 
@@ -76,7 +77,7 @@ func unzipAndRename(zipPath, destination string) error {
 	for _, f := range rc.File {
 
 		// Ignore cover art for now
-		if p.IsCoverArtFile(filepath.Base(f.Name)) {
+		if c.IsCoverArtFile(filepath.Base(f.Name)) {
 			fmt.Printf("Skipping: %s\n", f.Name)
 			continue
 		}
@@ -100,6 +101,9 @@ func Extract(zipFilePath, destination string) error {
 	err := o.CheckFile(zipFilePath)
 	if err != nil {
 		return err
+	}
+	if !c.IsZipFile(zipFilePath) {
+		return fmt.Errorf("file is not a zip archive")
 	}
 
 	album, err := p.ParseZipFileName(filepath.Base(zipFilePath))

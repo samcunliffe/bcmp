@@ -29,9 +29,6 @@ type Track struct {
 	FileType  string
 }
 
-var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
-var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
-
 // Get the filename and its extension in lower case
 func splitNameAndExtension(s string) (string, string) {
 	extension := filepath.Ext(s)
@@ -40,37 +37,9 @@ func splitNameAndExtension(s string) (string, string) {
 }
 
 // Get only the extension of a filename in lower case
-func extension(s string) string {
+func Extension(s string) string {
 	_, ext := splitNameAndExtension(s)
 	return ext
-}
-
-// Is the file a zip archive?
-func isZipFile(s string) bool {
-	return extension(s) == ".zip"
-}
-
-// Is the file a known cover art file?
-func IsCoverArtFile(name string) bool {
-	name = strings.ToLower(name)
-	for _, coverName := range coverArtFilenames {
-		if name == coverName {
-			return true
-		}
-	}
-	return false
-}
-
-// Is the file a known (supported) music file?
-func IsValidMusicFile(name string) bool {
-	ext := extension(name)
-
-	for _, fileType := range validMusicFiles {
-		if ext == fileType {
-			return true
-		}
-	}
-	return false
 }
 
 func toTitleCase(s string) string {
@@ -129,9 +98,6 @@ func hasTrackNumber(s string) bool {
 }
 
 func ParseZipFileName(name string) (Album, error) {
-	if !isZipFile(name) {
-		return Album{}, fmt.Errorf("file is not a zip archive")
-	}
 	name, _ = splitNameAndExtension(name)
 
 	// Split into artist and album
@@ -150,9 +116,6 @@ func ParseZipFileName(name string) (Album, error) {
 }
 
 func ParseMusicFileName(name string) (Album, Track, error) {
-	if !IsValidMusicFile(name) {
-		return Album{}, Track{}, fmt.Errorf("file is not a valid music file")
-	}
 	name, fileType := splitNameAndExtension(name)
 
 	// Should be two hyphens 'Artist - Album - XX Title'

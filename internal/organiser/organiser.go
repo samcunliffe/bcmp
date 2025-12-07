@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/samcunliffe/bcmp/internal/checker"
 	"github.com/samcunliffe/bcmp/internal/parser"
 )
 
@@ -63,7 +64,7 @@ func TrackDestination(t parser.Track, destination string) string {
 func moveAndRenameFile(sourcePath, destination string) error {
 	sourceFile := filepath.Base(sourcePath)
 
-	if !parser.IsValidMusicFile(sourceFile) {
+	if !checker.IsValidMusicFile(sourceFile) {
 		return fmt.Errorf("file %s is not a valid music file", sourceFile)
 	}
 

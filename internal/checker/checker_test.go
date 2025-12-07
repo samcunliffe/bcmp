@@ -1,6 +1,9 @@
 package checker
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestIsZipFile(t *testing.T) {
 	var testCases = []struct {
@@ -66,12 +69,19 @@ func TestCheckFileDirectory(t *testing.T) {
 	if err == nil {
 		t.Errorf("CheckFile on directory did not return error")
 	}
+	if strings.Contains(err.Error(), "is a directory") == false {
+		t.Errorf("CheckFile on directory returned wrong error: %v", err)
+	}
+
 }
 
 func TestCheckFileNonExistent(t *testing.T) {
 	err := CheckFile("testdata/nonexistent.zip")
 	if err == nil {
 		t.Errorf("CheckFile on nonexistent file did not return error")
+	}
+	if !strings.Contains(err.Error(), "no such file or directory") {
+		t.Errorf("CheckFile on nonexistent file returned wrong error: %v", err)
 	}
 }
 

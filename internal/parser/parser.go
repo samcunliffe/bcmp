@@ -5,7 +5,15 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
+
+var Config = struct {
+	TitleCase bool
+	Debug     bool
+}{false, false}
 
 type Album struct {
 	Artist string
@@ -21,7 +29,7 @@ type Track struct {
 }
 
 var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
-var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
+var validMusicFiles = []string{".flac", ".mp3", ".ogg", ".FLAC", ".MP3", ".OGG"}
 
 func IsCoverArtFile(name string) bool {
 	lowerName := strings.ToLower(name)
@@ -40,6 +48,20 @@ func IsValidMusicFile(name string) bool {
 		}
 	}
 	return false
+}
+
+func toTitleCase(s string) string {
+	smallWords := " a an and as at but by for from if in nor of on or the to v von vs "
+	words := strings.Split(s, " ")
+	for i, word := range words {
+		lowerPaddedWord := " " + strings.ToLower(word) + " "
+		if i != 0 && strings.Contains(smallWords, lowerPaddedWord) {
+			words[i] = strings.ToLower(word)
+		} else {
+			words[i] = cases.Title(language.English).String(word)
+		}
+	}
+	return strings.Join(words, " ")
 }
 
 func splitOnHyphen(s string) (string, string) {
@@ -71,10 +93,11 @@ func extractNumberPrefix(s string) (int, string, error) {
 
 func ParseZipFileName(name string) (Album, error) {
 	// Trim the .zip suffix
-	if !strings.HasSuffix(name, ".zip") {
+	if !strings.HasSuffix(name, ".zip") && !strings.HasSuffix(name, ".ZIP") {
 		return Album{}, fmt.Errorf("filename does not have .zip suffix")
 	}
 	name = strings.TrimSuffix(name, ".zip")
+	name = strings.TrimSuffix(name, ".ZIP")
 
 	// Split into artist and album
 	if !strings.Contains(name, " - ") {
@@ -84,6 +107,10 @@ func ParseZipFileName(name string) (Album, error) {
 		return Album{}, fmt.Errorf("expected only one ' - ' separator: '%s'", name)
 	}
 	artist, album := splitOnHyphen(name)
+	if Config.TitleCase {
+		artist = toTitleCase(artist)
+		album = toTitleCase(album)
+	}
 	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }
 
@@ -93,7 +120,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	for _, suffix := range validMusicFiles {
 		if strings.HasSuffix(name, suffix) {
 			name = strings.TrimSuffix(name, suffix)
-			suffixFound = suffix
+			suffixFound = strings.ToLower(suffix)
 			break
 		}
 	}
@@ -113,11 +140,22 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
 
+	// Convert to title case if configured
+	if Config.TitleCase {
+		artist = toTitleCase(artist)
+		albumTitle = toTitleCase(albumTitle)
+	}
+
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
 	number, songTitle, err := extractNumberPrefix(fullTrack)
 	if err != nil {
 		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+	}
+
+	if Config.TitleCase {
+		songTitle = toTitleCase(songTitle)
+		fullTrack = fmt.Sprintf("%02d %s", number, songTitle)
 	}
 
 	track := Track{

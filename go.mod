@@ -1,10 +1,13 @@
 module github.com/samcunliffe/bcmp
 
-go 1.22.2
+go 1.24.0
+
+toolchain go1.24.2
 
 require (
 	github.com/ivanpirog/coloredcobra v1.0.1
 	github.com/spf13/cobra v1.10.1
+	golang.org/x/text v0.31.0
 )
 
 require (

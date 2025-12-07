@@ -1,24 +1,35 @@
 package cmd
 
 import (
-	"strings"
+	"bytes"
+	"os"
 	"testing"
 )
 
-func TestTidyNoOp(t *testing.T) {
-	t.Skip()
-	rootCmd.SetArgs([]string{"tidy"})
-	defer rootCmd.SetArgs(nil)
+func TestTidyEndToEndProcessing(t *testing.T) {
+	destination := t.TempDir()
+	source := "testdata/Artist - Album - 01 Track.flac"
+	defer func() {
+		f, _ := os.Create(source)
+		os.WriteFile(source, []byte("Just a non-empty test file."), 0644)
+		f.Close()
+	}()
 
+	// Buffer to capture output
+	buf := &bytes.Buffer{}
+	rootCmd.SetOut(buf)
+
+	// Execute the tidy command
+	rootCmd.SetArgs([]string{
+		"tidy",
+		"testdata/Artist - Album - 01 Track.flac",
+		"--destination",
+		destination,
+	})
 	err := rootCmd.Execute()
-	if err == nil {
-		t.Errorf("Expected error for tidy command, got nil")
-	}
+	rootCmd.SetArgs(nil)
 
-	want := "not implemented"
-	got := err.Error()
-
-	if !strings.Contains(got, want) {
-		t.Errorf("Expected error %q, got %q", want, got)
+	if err != nil {
+		t.Errorf("Expected no error for tidy command, got %e", err)
 	}
 }

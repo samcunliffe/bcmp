@@ -17,6 +17,7 @@ var extractCmd = &cobra.Command{
 	Aliases: []string{"xt"},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		destination, _ := cmd.Flags().GetString("destination")
+		parser.Config.TitleCase, _ = cmd.Flags().GetBool("title-case")
 
 		zipFilePath := args[0]
 		err := organiser.CheckFile(zipFilePath)

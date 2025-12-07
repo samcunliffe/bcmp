@@ -60,3 +60,38 @@ func TestIsValidMusicFile(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckFileDirectory(t *testing.T) {
+	err := CheckFile("testdata/directory")
+	if err == nil {
+		t.Errorf("CheckFile on directory did not return error")
+	}
+}
+
+func TestCheckFileNonExistent(t *testing.T) {
+	err := CheckFile("testdata/nonexistent.zip")
+	if err == nil {
+		t.Errorf("CheckFile on nonexistent file did not return error")
+	}
+}
+
+func TestCheckFileEmptyFile(t *testing.T) {
+	err := CheckFile("testdata/emptyfile")
+	if err == nil {
+		t.Errorf("CheckFile on empty file did not return error")
+	}
+}
+
+func TestCheckFileValidZipFile(t *testing.T) {
+	err := CheckFile("testdata/validfile.zip")
+	if err != nil {
+		t.Errorf("CheckFile on valid file returned error: %v", err)
+	}
+}
+
+func TestCheckFileValidMusicFile(t *testing.T) {
+	err := CheckFile("testdata/ding.flac")
+	if err != nil {
+		t.Errorf("CheckFile on valid music file returned error: %v", err)
+	}
+}

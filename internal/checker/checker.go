@@ -1,6 +1,8 @@
 package checker
 
 import (
+	"fmt"
+	"os"
 	"strings"
 
 	p "github.com/samcunliffe/bcmp/internal/parser"
@@ -35,4 +37,19 @@ func IsValidMusicFile(name string) bool {
 		}
 	}
 	return false
+}
+
+// Ensure a zip file or music file exists and is not a directory
+func CheckFile(path string) error {
+	fi, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	if fi.IsDir() {
+		return fmt.Errorf("the path: %v is a directory, not a file", fi.Name())
+	}
+	if fi.Size() == 0 {
+		return fmt.Errorf("the file: %v is empty", fi.Name())
+	}
+	return nil
 }

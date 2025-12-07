@@ -2,6 +2,25 @@ package checker
 
 import "testing"
 
+func TestIsZipFile(t *testing.T) {
+	var testCases = []struct {
+		input string
+		want  bool
+	}{
+		{"archive.zip", true},
+		{"ARCHIVE.ZIP", true},
+		{"archive.rar", false},
+		{"archive", false},
+		{"archive.zipx", false},
+	}
+	for _, testcase := range testCases {
+		got := IsZipFile(testcase.input)
+		if got != testcase.want {
+			t.Errorf("IsZipFile(%q) = %v; want %v", testcase.input, got, testcase.want)
+		}
+	}
+}
+
 func TestIsCoverArtFile(t *testing.T) {
 	var testCases = []struct {
 		input string

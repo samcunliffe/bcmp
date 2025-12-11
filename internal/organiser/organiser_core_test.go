@@ -63,7 +63,9 @@ func putBackFile(path string) {
 	if err != nil {
 		panic("unable to put back file in testdata: " + err.Error())
 	}
-	os.WriteFile(path, []byte("Just a non-empty test file."), 0644)
+	if err := os.WriteFile(path, []byte("Just a non-empty test file."), 0644); err != nil {
+		panic("unable to write test file in testdata: " + err.Error())
+	}
 	f.Close()
 }
 

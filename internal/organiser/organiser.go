@@ -9,6 +9,10 @@ import (
 	p "github.com/samcunliffe/bcmp/internal/parser"
 )
 
+var Config = struct {
+	DryRun bool
+}{}
+
 // Determine default destination for music files
 //
 // Typically $HOME/Music. If $HOME cannot be determined, use current directory.
@@ -30,6 +34,11 @@ func CreateDestination(album p.Album, base string) (string, error) {
 		fmt.Printf("Warning: base destination path %s does not exist. Will create it.\n", base)
 	}
 	destination := filepath.Join(base, album.Artist, album.Title)
+
+	if Config.DryRun {
+		fmt.Printf("[Dry run] Create directory: %s\n", destination)
+		return destination, nil
+	}
 	return destination, os.MkdirAll(destination, os.ModePerm)
 }
 
@@ -61,6 +70,11 @@ func moveAndRenameFile(sourcePath, destination string) error {
 	destination, err = CreateDestination(album, destination)
 	if err != nil {
 		return err
+	}
+
+	if Config.DryRun {
+		fmt.Printf("[Dry run] %s → %s\n", sourcePath, TrackDestination(track, destination))
+		return nil
 	}
 
 	return os.Rename(sourcePath, TrackDestination(track, destination))

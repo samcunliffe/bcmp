@@ -12,9 +12,15 @@ var tidyCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	Aliases: []string{"t"},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		destination, _ := cmd.Flags().GetString("destination")
+		// Global config flags
 		parser.Config.TitleCase, _ = cmd.Flags().GetBool("title-case")
+		organiser.Config.DryRun, _ = cmd.Flags().GetBool("dry-run")
+
+		// Actual source and destination paths
+		destination, _ := cmd.Flags().GetString("destination")
 		musicFile := args[0]
+
+		// Call core functionality
 		return organiser.Tidy(musicFile, destination)
 	},
 }

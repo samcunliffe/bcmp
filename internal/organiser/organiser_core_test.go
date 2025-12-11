@@ -3,6 +3,7 @@ package organiser
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/samcunliffe/bcmp/internal/parser"
@@ -79,5 +80,20 @@ func TestTidy(t *testing.T) {
 	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
 	if _, err := os.Stat(wantPath); os.IsNotExist(err) {
 		t.Fatalf("Tidy did not create file at %q", wantPath)
+	}
+}
+
+func TestTidyNonExistentFile(t *testing.T) {
+	destination := "./"
+	source := "Non Existant Artist - Non Existant Album - 01 Track.flac"
+
+	err := Tidy(source, destination)
+	if err == nil {
+		t.Fatalf("Tidy(%q, %q) didn't return an error!", source, destination)
+	}
+
+	want := "no such file or directory"
+	if !strings.Contains(err.Error(), want) {
+		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
 	}
 }

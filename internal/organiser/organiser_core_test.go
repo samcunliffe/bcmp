@@ -99,3 +99,33 @@ func TestTidyNonExistentFile(t *testing.T) {
 		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
 	}
 }
+
+func TestTidyInvalidFilename(t *testing.T) {
+	destination := "./"
+	source := "testdata/Un-Parsable Filename.flac"
+	defer putBackFile(source)
+
+	err := Tidy(source, destination)
+	if err == nil {
+		t.Fatalf("Tidy(%q, %q) didn't return an error!", source, destination)
+	}
+	want := "does not contain ' - '"
+	if !strings.Contains(err.Error(), want) {
+		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
+	}
+}
+
+func TestTidyNonMusicFile(t *testing.T) {
+	destination := "./"
+	source := "testdata/Not a Music File.txt"
+	defer putBackFile(source)
+
+	err := Tidy(source, destination)
+	if err == nil {
+		t.Fatalf("Tidy(%q, %q) didn't return an error!", source, destination)
+	}
+	want := "not a valid music file"
+	if !strings.Contains(err.Error(), want) {
+		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
+	}
+}

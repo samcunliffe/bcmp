@@ -80,3 +80,18 @@ func TestMoveAndRename(t *testing.T) {
 		t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
 	}
 }
+
+func TestTidy(t *testing.T) {
+	destination := t.TempDir()
+	source := "testdata/Artist - Album - 01 Track.flac"
+	defer func() {
+		f, _ := os.Create(source)
+		os.WriteFile(source, []byte("Just a non-empty test file."), 0644)
+		f.Close()
+	}()
+
+	err := Tidy(source, destination)
+	if err != nil {
+		t.Fatalf("Tidy(%q, %q) returned error: %v", source, destination, err)
+	}
+}

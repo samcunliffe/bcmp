@@ -3,6 +3,7 @@ package organiser
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/samcunliffe/bcmp/internal/parser"
@@ -62,21 +63,39 @@ func putBackFile(path string) {
 	if err != nil {
 		panic("unable to put back file in testdata: " + err.Error())
 	}
+	if err := os.WriteFile(path, []byte("Just a non-empty test file."), 0644); err != nil {
+		panic("unable to write test file in testdata: " + err.Error())
+	}
 	f.Close()
 }
 
-func TestMoveAndRename(t *testing.T) {
+func TestTidy(t *testing.T) {
 	destination := t.TempDir()
 	source := "testdata/Artist - Album - 01 Track.flac"
 	defer putBackFile(source)
 
-	err := moveAndRenameFile(source, destination)
+	err := Tidy(source, destination)
 	if err != nil {
-		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
+		t.Fatalf("Tidy(%q, %q) returned error: %v", source, destination, err)
 	}
 
 	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
 	if _, err := os.Stat(wantPath); os.IsNotExist(err) {
-		t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
+		t.Fatalf("Tidy did not create file at %q", wantPath)
+	}
+}
+
+func TestTidyNonExistentFile(t *testing.T) {
+	destination := "./"
+	source := "Non Existant Artist - Non Existant Album - 01 Track.flac"
+
+	err := Tidy(source, destination)
+	if err == nil {
+		t.Fatalf("Tidy(%q, %q) didn't return an error!", source, destination)
+	}
+
+	want := "no such file or directory"
+	if !strings.Contains(err.Error(), want) {
+		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
 	}
 }

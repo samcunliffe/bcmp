@@ -62,36 +62,22 @@ func putBackFile(path string) {
 	if err != nil {
 		panic("unable to put back file in testdata: " + err.Error())
 	}
+	os.WriteFile(path, []byte("Just a non-empty test file."), 0644)
 	f.Close()
-}
-
-func TestMoveAndRename(t *testing.T) {
-	destination := t.TempDir()
-	source := "testdata/Artist - Album - 01 Track.flac"
-	defer putBackFile(source)
-
-	err := moveAndRenameFile(source, destination)
-	if err != nil {
-		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
-	}
-
-	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
-	if _, err := os.Stat(wantPath); os.IsNotExist(err) {
-		t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
-	}
 }
 
 func TestTidy(t *testing.T) {
 	destination := t.TempDir()
 	source := "testdata/Artist - Album - 01 Track.flac"
-	defer func() {
-		f, _ := os.Create(source)
-		os.WriteFile(source, []byte("Just a non-empty test file."), 0644)
-		f.Close()
-	}()
+	defer putBackFile(source)
 
 	err := Tidy(source, destination)
 	if err != nil {
 		t.Fatalf("Tidy(%q, %q) returned error: %v", source, destination, err)
+	}
+
+	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
+	if _, err := os.Stat(wantPath); os.IsNotExist(err) {
+		t.Fatalf("Tidy did not create file at %q", wantPath)
 	}
 }

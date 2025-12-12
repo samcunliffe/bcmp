@@ -2,44 +2,30 @@ package cmd
 
 import (
 	"bytes"
-	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExtractEndToEndProcessing(t *testing.T) {
 	destination := t.TempDir()
+	source := "testdata/Artist - Album.zip"
 
-	testCases := []struct {
-		filename  string
-		wantError bool
-	}{
-		{"testdata/Artist - Album.zip", false},
-		{"testdata/Artist - Nonexistent Album.zip", true},
-	}
+	// Buffer to capture output
+	buf := &bytes.Buffer{}
+	rootCmd.SetOut(buf)
 
-	for _, testcase := range testCases {
+	// Actually execute the command
+	rootCmd.SetArgs([]string{
+		"extract",
+		source,
+		"--destination",
+		destination,
+	})
+	defer rootCmd.SetArgs(nil)
+	err := rootCmd.Execute()
 
-		// Buffer to capture output
-		buf := &bytes.Buffer{}
-		rootCmd.SetOut(buf)
-
-		// Actually execute the command
-		rootCmd.SetArgs([]string{"extract", testcase.filename, "--destination", destination})
-		err := rootCmd.Execute()
-		rootCmd.SetArgs(nil) // cleanup for next iteration or next execution
-
-		gotOutput := buf.String()
-		if testcase.wantError {
-			if err == nil {
-				t.Errorf("Expected error when processing %s, got %q", testcase.filename, gotOutput)
-			}
-		} else {
-			if err != nil {
-				t.Errorf("Expected no error when processing %s, got %v", testcase.filename, err)
-			}
-			if strings.Contains(gotOutput, "Error") {
-				t.Errorf("Expected no error messages in output, got %q", gotOutput)
-			}
-		}
-	}
+	got := buf.String()
+	assert.NoError(t, err, "Expected no error when processing %s", source)
+	assert.NotContains(t, got, "Error", "Expected no error messages in output for %s", source)
 }

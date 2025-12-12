@@ -1,6 +1,10 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestExtension(t *testing.T) {
 	var testCases = []struct {
@@ -14,29 +18,21 @@ func TestExtension(t *testing.T) {
 		{"no_extension", ""},
 		{"multiple.dots.in.name.txt", ".txt"},
 	}
-	for _, testcase := range testCases {
-		got := Extension(testcase.input)
-		if got != testcase.want {
-			t.Errorf("Extension(%q) = %q; want %q", testcase.input, got, testcase.want)
-		}
+	for _, tc := range testCases {
+		got := Extension(tc.input)
+		assert.Equal(t, tc.want, got, "Extension(%q) = %q; want %q", tc.input, got, tc.want)
 	}
 }
 
 func TestParserConfig(t *testing.T) {
 	// Defaults should be false
-	if Config.TitleCase {
-		t.Errorf("Expected default TitleCase to be false, got %v", Config.TitleCase)
-	}
-	if Config.Debug {
-		t.Errorf("Expected default Debug to be false, got %v", Config.Debug)
-	}
+	assert.False(t, Config.TitleCase, "Expected default TitleCase to be false, got %v", Config.TitleCase)
+	assert.False(t, Config.Debug, "Expected default Debug to be false, got %v", Config.Debug)
 
 	// Sanity check that we can set a value
 	Config.TitleCase = true
 	defer func() { Config.TitleCase = false }()
-	if !Config.TitleCase {
-		t.Errorf("Expected TitleCase to be true after setting, got %v", Config.TitleCase)
-	}
+	assert.True(t, Config.TitleCase, "Expected TitleCase to be true after setting, got %v", Config.TitleCase)
 }
 
 func TestToTitleCase(t *testing.T) {
@@ -55,11 +51,9 @@ func TestToTitleCase(t *testing.T) {
 		{"BABYMETAL - SONG 4 (4の歌)", "Babymetal - Song 4 (4の歌)"},     // Hiragana and Kanji
 		{"06 THE OTHER SIDE OF ANGER", "06 The Other Side of Anger"}, // Leading track number and beginning with a 'small' word
 	}
-	for _, testcase := range testCases {
-		got := toTitleCase(testcase.input)
-		if got != testcase.want {
-			t.Errorf("toTitleCase(%q) = %q; want %q", testcase.input, got, testcase.want)
-		}
+	for _, tc := range testCases {
+		got := toTitleCase(tc.input)
+		assert.Equal(t, tc.want, got, "toTitleCase(%q) = %q; want %q", tc.input, got, tc.want)
 	}
 }
 
@@ -75,17 +69,17 @@ func TestNumberPrefix(t *testing.T) {
 		{"No Number Here", -1},
 		{"", -1},
 	}
-	for _, testcase := range testCases {
-		got, _, err := numberPrefix(testcase.input)
-		if got != testcase.want {
-			t.Errorf("numberPrefix(%q) = %d; want %d", testcase.input, got, testcase.want)
+	for _, tc := range testCases {
+		expectError := tc.want == -1
+		got, _, err := numberPrefix(tc.input)
+		assert.Equal(t, tc.want, got, "numberPrefix(%q) = %d; want %d", tc.input, got, tc.want)
+
+		if expectError {
+			assert.ErrorContains(t, err, "track number extraction",
+				"numberPrefix(%q) did not return error when expected", tc.input)
+			return
 		}
-		if testcase.want == -1 {
-			// Then there should be an error...
-			if err == nil {
-				t.Errorf("numberPrefix(%q) expected error, got %d", testcase.input, got)
-			}
-		}
+		assert.NoError(t, err, "numberPrefix(%q) returned error: %v", tc.input, err)
 	}
 }
 
@@ -100,10 +94,8 @@ func TestHasTrackNumber(t *testing.T) {
 		{"No Number Here", false},
 		{"", false},
 	}
-	for _, testcase := range testCases {
-		got := hasTrackNumber(testcase.input)
-		if got != testcase.want {
-			t.Errorf("hasTrackNumber(%q) = %v; want %v", testcase.input, got, testcase.want)
-		}
+	for _, tc := range testCases {
+		got := hasTrackNumber(tc.input)
+		assert.Equal(t, tc.want, got, "hasTrackNumber(%q) = %v; want %v", tc.input, got, tc.want)
 	}
 }

@@ -94,5 +94,5 @@ func TestTidyNonMusicFile(t *testing.T) {
 	defer bcmptest.PutFileBack(t, source)
 
 	err := Tidy(source, destination)
-	assert.ErrorContains(t, err, "not a valid music file", "Tidy(%q, %q) did't return a/the expected error", source, destination)
+	assert.ErrorContains(t, err, "not a valid music file", "Tidy(%q, %q) didn't return a/the expected error", source, destination)
 }

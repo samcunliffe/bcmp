@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/samcunliffe/bcmp/internal/parser"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDefaultDestination(t *testing.T) {
@@ -13,9 +14,7 @@ func TestDefaultDestination(t *testing.T) {
 
 	want := filepath.Join(home, "Music")
 	got := DefaultDestination()
-	if got != want {
-		t.Errorf("DefaultDestination() = %q; want %q", got, want)
-	}
+	assert.Equal(t, want, got, "DefaultDestination() = %q; want %q", got, want)
 }
 
 func TestDetermineDefaultDestinationNoHome(t *testing.T) {
@@ -23,9 +22,8 @@ func TestDetermineDefaultDestinationNoHome(t *testing.T) {
 
 	want := filepath.Join(".", "Music")
 	got := DefaultDestination()
-	if got != want {
-		t.Errorf("DefaultDestination() = %q; want %q", got, want)
-	}
+
+	assert.Equal(t, want, got, "DefaultDestination() = %q; want %q", got, want)
 }
 
 func TestTrackDestination(t *testing.T) {
@@ -36,9 +34,8 @@ func TestTrackDestination(t *testing.T) {
 		FileType:  ".flac",
 	}
 	want := "01 First Track.flac"
-	if TrackDestination(track, "./") != want {
-		t.Errorf("TrackDestinationPath() = %q; want %q", TrackDestination(track, "./"), want)
-	}
+	got := TrackDestination(track, "./")
+	assert.Equal(t, want, got, "TrackDestinationPath() = %q; want %q", got, want)
 }
 
 func TestTrackDestinationWeirdPaths(t *testing.T) {
@@ -58,10 +55,8 @@ func TestTrackDestinationWeirdPaths(t *testing.T) {
 		{"./music/", "music/01 First Track.flac"},
 	}
 
-	for _, testcase := range testCases {
-		got := TrackDestination(track, testcase.input)
-		if got != testcase.want {
-			t.Errorf("TrackDestinationPath(_, %q) = %q; want %q", testcase.input, got, testcase.want)
-		}
+	for _, tc := range testCases {
+		got := TrackDestination(track, tc.input)
+		assert.Equal(t, tc.want, got, "TrackDestinationPath(_, %q) = %q; want %q", tc.input, got, tc.want)
 	}
 }

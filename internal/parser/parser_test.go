@@ -20,7 +20,7 @@ func TestExtension(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := Extension(tc.input)
-		assert.Equal(t, got, tc.want, "Extension(%q) = %q; want %q", tc.input, got, tc.want)
+		assert.Equal(t, tc.want, got, "Extension(%q) = %q; want %q", tc.input, got, tc.want)
 	}
 }
 
@@ -53,7 +53,7 @@ func TestToTitleCase(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := toTitleCase(tc.input)
-		assert.Equal(t, got, tc.want, "toTitleCase(%q) = %q; want %q", tc.input, got, tc.want)
+		assert.Equal(t, tc.want, got, "toTitleCase(%q) = %q; want %q", tc.input, got, tc.want)
 	}
 }
 
@@ -72,7 +72,7 @@ func TestNumberPrefix(t *testing.T) {
 	for _, tc := range testCases {
 		expectError := tc.want == -1
 		got, _, err := numberPrefix(tc.input)
-		assert.Equal(t, got, tc.want, "numberPrefix(%q) = %d; want %d", tc.input, got, tc.want)
+		assert.Equal(t, tc.want, got, "numberPrefix(%q) = %d; want %d", tc.input, got, tc.want)
 
 		if expectError {
 			assert.ErrorContains(t, err, "track number extraction",
@@ -96,6 +96,6 @@ func TestHasTrackNumber(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		got := hasTrackNumber(tc.input)
-		assert.Equal(t, got, tc.want, "hasTrackNumber(%q) = %v; want %v", tc.input, got, tc.want)
+		assert.Equal(t, tc.want, got, "hasTrackNumber(%q) = %v; want %v", tc.input, got, tc.want)
 	}
 }

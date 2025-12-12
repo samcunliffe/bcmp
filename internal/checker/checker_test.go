@@ -62,20 +62,17 @@ func TestIsValidMusicFile(t *testing.T) {
 
 func TestCheckFileDirectory(t *testing.T) {
 	err := CheckFile("testdata/directory")
-	assert.Error(t, err, "CheckFile on directory did not return error")
-	assert.Contains(t, err.Error(), "is a directory", "CheckFile on directory returned wrong error: %v", err)
+	assert.ErrorContains(t, err, "is a directory", "CheckFile on directory returned no/wrong error: %v", err)
 }
 
 func TestCheckFileNonExistent(t *testing.T) {
 	err := CheckFile("testdata/nonexistent.zip")
-	assert.Error(t, err, "CheckFile on nonexistent file did not return error")
-	assert.Contains(t, err.Error(), "no such file or directory", "CheckFile on nonexistent file returned wrong error: %v", err)
+	assert.ErrorContains(t, err, "no such file or directory", "CheckFile on nonexistent file returned no/wrong error: %v", err)
 }
 
 func TestCheckFileEmptyFile(t *testing.T) {
 	err := CheckFile("testdata/emptyfile")
-	assert.Error(t, err, "CheckFile on empty file did not return error")
-	assert.Contains(t, err.Error(), "is empty", "CheckFile on empty file returned wrong error: %v", err)
+	assert.ErrorContains(t, err, "is empty", "CheckFile on empty file returned no/wrong error: %v", err)
 }
 
 func TestCheckFileValidZipFile(t *testing.T) {

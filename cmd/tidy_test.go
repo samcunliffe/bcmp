@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTidyEndToEndProcessing(t *testing.T) {
@@ -26,10 +28,9 @@ func TestTidyEndToEndProcessing(t *testing.T) {
 		"--destination",
 		destination,
 	})
-	err := rootCmd.Execute()
-	rootCmd.SetArgs(nil)
+	defer rootCmd.SetArgs(nil)
 
-	if err != nil {
-		t.Errorf("Expected no error for tidy command, got %e", err)
-	}
+	err := rootCmd.Execute()
+
+	assert.NoError(t, err, "Expected no error for tidy command, got %v", err)
 }

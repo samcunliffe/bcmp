@@ -80,3 +80,25 @@ func TestMoveAndRename(t *testing.T) {
 		t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
 	}
 }
+
+func TestMoveAndRenameDryRun(t *testing.T) {
+	destination := t.TempDir() // Should remain empty
+	source := "testdata/Artist - Album - 01 Track.flac"
+	// defer putBackFile(source)
+
+	Config.DryRun = true
+	defer func() { Config.DryRun = false }()
+
+	err := moveAndRenameFile(source, destination)
+	if err != nil {
+		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
+	}
+
+	// _, err := os.EmptyDir(destination)
+	//     _, err = f.Readdirnames(1) // Or f.Readdir(1)
+
+	// wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
+	// if _, err := os.Stat(wantPath); os.IsNotExist(err) {
+	// 	t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
+	// }
+}

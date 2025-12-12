@@ -7,6 +7,7 @@ import (
 )
 
 // Utility test helper to recreate a moved file after testing is done.
+// Usually deferred.
 func PutFileBack(t *testing.T, path string) {
 	t.Helper()
 	f, err := os.Create(path)

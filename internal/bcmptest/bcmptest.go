@@ -16,7 +16,5 @@ func PutFileBack(t *testing.T, path string) {
 	}
 	defer f.Close()
 
-	if _, err := f.WriteString("Just a non-empty test file."); err != nil {
-		panic("unable to write test file: " + err.Error())
-	}
+	f.WriteString("Just a non-empty test file.")
 }

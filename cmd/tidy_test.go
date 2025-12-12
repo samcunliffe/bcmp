@@ -2,20 +2,16 @@ package cmd
 
 import (
 	"bytes"
-	"os"
 	"testing"
 
+	"github.com/samcunliffe/bcmp/internal/bcmptest"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTidyEndToEndProcessing(t *testing.T) {
 	destination := t.TempDir()
 	source := "testdata/Artist - Album - 01 Track.flac"
-	defer func() {
-		f, _ := os.Create(source)
-		os.WriteFile(source, []byte("Just a non-empty test file."), 0644)
-		f.Close()
-	}()
+	defer bcmptest.PutFileBack(t, source)
 
 	// Buffer to capture output
 	buf := &bytes.Buffer{}

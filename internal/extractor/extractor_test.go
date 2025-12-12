@@ -3,22 +3,22 @@ package extractor
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExtract(t *testing.T) {
-
 	destination := t.TempDir()
 	testfile := "testdata/Artist - Album.zip"
 
 	err := Extract(testfile, destination)
-	if err != nil {
-		t.Fatalf("ExtractAndRename returned an error: %v", err)
-	}
+	assert.NoError(t, err, "Extract(%q, %q) returned error: %v", testfile, destination, err)
 
 	// Check that expected files exist
 	wantDestination := filepath.Join(destination, "Artist", "Album")
+	assert.DirExists(t, wantDestination)
+
 	wantFiles := []string{
 		"01 First Track.flac",
 		"02 Second Track.flac",
@@ -26,9 +26,7 @@ func TestExtract(t *testing.T) {
 	}
 	for _, wantFile := range wantFiles {
 		wantPath := filepath.Join(wantDestination, wantFile)
-		if _, err := os.Stat(wantPath); os.IsNotExist(err) {
-			t.Errorf("Expected file %s does not exist after extraction", wantPath)
-		}
+		assert.FileExists(t, wantPath, "Expected file %s does not exist after extraction", wantPath)
 	}
 }
 
@@ -37,12 +35,7 @@ func TestEmptyArchive(t *testing.T) {
 	testfile := "testdata/empty.zip"
 
 	err := unzipAndRename(testfile, destination)
-	if err == nil {
-		t.Errorf("Expected an error for an empty archive")
-	}
-	if !strings.Contains(err.Error(), "not a valid zip file") {
-		t.Errorf("Expected error message about empty archive, got: %v", err.Error())
-	}
+	assert.ErrorContains(t, err, "not a valid zip file", "Expected error for empty archive, got: %v", err)
 }
 
 func TestInvalidArchive(t *testing.T) {
@@ -50,12 +43,8 @@ func TestInvalidArchive(t *testing.T) {
 	testfile := "testdata/one-file-no-music.zip"
 
 	err := unzipAndRename(testfile, destination)
-	if err == nil {
-		t.Fatal("Expected an error for an invalid archive")
-	}
-	if !strings.Contains(err.Error(), "filename does not have a valid music file suffix") {
-		t.Errorf("Expected error message about no valid music files, got: %v", err.Error())
-	}
+	assert.ErrorContains(t, err, "filename does not have a valid music file suffix",
+		"Expected error for invalid archive, got: %v", err)
 }
 
 func TestNoFilePermissions(t *testing.T) {
@@ -64,18 +53,11 @@ func TestNoFilePermissions(t *testing.T) {
 
 	// Remove write permissions from destination
 	err := os.Chmod(destination, 0555) // TODO can I avoid magic numbers and platform specific?
-	if err != nil {
-		t.Fatalf("Failed to change permissions of destination directory: %v", err)
-	}
+	assert.NoError(t, err, "Failed to change permissions in test setup: %v", err)
 	defer os.Chmod(destination, 0755) // Restore permissions after test
 
 	err = unzipAndRename(testfile, destination)
-	if err == nil {
-		t.Fatal("Expected an error due to lack of write permissions")
-	}
-	if !strings.Contains(err.Error(), "permission denied") {
-		t.Errorf("Expected permission denied error, got: %v", err.Error())
-	}
+	assert.ErrorContains(t, err, "permission denied", "Expected permission denied error, got: %v", err)
 }
 
 func TestArchiveOnlyDirectory(t *testing.T) {
@@ -83,12 +65,7 @@ func TestArchiveOnlyDirectory(t *testing.T) {
 	testfile := "testdata/no-files-only-directories.zip"
 
 	err := unzipAndRename(testfile, destination)
-	if err == nil {
-		t.Fatal("Expected an error for archive with only directories")
-	}
-	if !strings.Contains(err.Error(), "contains a directory") {
-		t.Errorf("Expected error message about directories only, got: %v", err.Error())
-	}
+	assert.ErrorContains(t, err, "contains a directory", "Expected error about directories, got: %v", err)
 }
 
 // Test for Zip Slip vulnerability
@@ -101,10 +78,6 @@ func TestArchiveWithZipSlip(t *testing.T) {
 	testfile := "testdata/archive-with-path-outside-slip.zip"
 
 	err := unzipAndRename(testfile, destination)
-	if err == nil {
-		t.Fatal("Expected an error for zip slip vulnerability")
-	}
-	if !strings.Contains(err.Error(), "invalid file path") {
-		t.Errorf("Expected error about invalid file path, got: %v", err.Error())
-	}
+	assert.ErrorContains(t, err, "invalid file path",
+		"Expected error about invalid file path, got: %v", err.Error())
 }

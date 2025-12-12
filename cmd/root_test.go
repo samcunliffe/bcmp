@@ -48,7 +48,6 @@ func TestRootCmdHelp(t *testing.T) {
 
 			// Actually execute the command - should show help without error
 			err := rootCmd.Execute()
-
 			assert.NoError(t, err, "Expected no error for help flag %s, got %v", flag, err)
 
 			// Check output contains helpful substrings

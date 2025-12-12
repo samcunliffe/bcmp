@@ -1,6 +1,10 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestParseZipFileName(t *testing.T) {
 	var testCases = []struct {
@@ -25,22 +29,19 @@ func TestParseZipFileName(t *testing.T) {
 		{"NERVOSA - JAILBREAK.ZIP", true, "Nervosa", "Jailbreak"},
 		{"BLEED FROM WITHIN - SHRINE.ZIP", true, "Bleed from Within", "Shrine"},
 	}
-	for _, testcase := range testCases {
-		// if we're also testing the title case flag
-		if testcase.titleCaseCfg {
-			Config.TitleCase = true
-		}
-		got, err := ParseZipFileName(testcase.inputFilename)
-		Config.TitleCase = false // reset after test execution
+	for _, tc := range testCases {
+		t.Run(tc.inputFilename, func(t *testing.T) {
+			// if we're also testing the title case flag
+			if tc.titleCaseCfg {
+				Config.TitleCase = true
+				defer func() { Config.TitleCase = false }()
+			}
+			got, err := ParseZipFileName(tc.inputFilename)
 
-		if err != nil {
-			t.Errorf("ParseZipFileName(%q) returned error: %v", testcase.inputFilename, err)
-		}
-		if got.Artist != testcase.wantArtist || got.Title != testcase.wantAlbum {
-			t.Errorf("ParseZipFileName(%q) = artist: %q, album: %q; want artist: %q, album: %q",
-				testcase.inputFilename, got.Artist, got.Title, testcase.wantArtist, testcase.wantAlbum)
-		}
-
+			assert.NoError(t, err, "ParseZipFileName(%q) returned error: %v", tc.inputFilename, err)
+			assert.Equal(t, tc.wantArtist, got.Artist)
+			assert.Equal(t, tc.wantAlbum, got.Title)
+		})
 	}
 }
 
@@ -54,8 +55,6 @@ func TestParseZipFileNameErrors(t *testing.T) {
 	}
 	for _, filename := range errorCases {
 		_, err := ParseZipFileName(filename)
-		if err == nil {
-			t.Errorf("ParseZipFileName(%q) expected error but got nil", filename)
-		}
+		assert.Error(t, err, "ParseZipFileName(%q) expected error", filename)
 	}
 }

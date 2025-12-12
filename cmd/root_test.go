@@ -21,7 +21,7 @@ func TestRootCmdNoArgs(t *testing.T) {
 	// Check got contains expected prompt
 	got := buf.String()
 	want := "Extract and organise Bandcamp music files."
-	assert.NotContains(t, got, want, "Expected output to contain %q, got %q", want, got)
+	assert.Contains(t, got, want, "Expected output to contain %q, got %q", want, got)
 }
 
 func TestRootCmdHelp(t *testing.T) {

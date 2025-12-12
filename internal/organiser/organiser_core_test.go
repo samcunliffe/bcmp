@@ -62,10 +62,10 @@ func TestTidy(t *testing.T) {
 
 func TestTidyNonExistentFile(t *testing.T) {
 	destination := "./"
-	source := "Non Existant Artist - Non Existant Album - 01 Track.flac"
+	source := "Non Existent Artist - Non Existent Album - 01 Track.flac"
 
 	err := Tidy(source, destination)
-	assert.Error(t, err, "Tidy(%q, %q) did't return an error!", source, destination)
+	assert.Error(t, err, "Tidy(%q, %q) didn't return an error!", source, destination)
 
 	want := "no such file or directory"
 	if !strings.Contains(err.Error(), want) {

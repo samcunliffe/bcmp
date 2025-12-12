@@ -1,8 +1,9 @@
 package checker
 
 import (
-	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestIsZipFile(t *testing.T) {
@@ -16,11 +17,9 @@ func TestIsZipFile(t *testing.T) {
 		{"archive", false},
 		{"archive.zipx", false},
 	}
-	for _, testcase := range testCases {
-		got := IsZipFile(testcase.input)
-		if got != testcase.want {
-			t.Errorf("IsZipFile(%q) = %v; want %v", testcase.input, got, testcase.want)
-		}
+	for _, tc := range testCases {
+		got := IsZipFile(tc.input)
+		assert.Equal(t, tc.want, got, "IsZipFile(%q) = %v; want %v", tc.input, got, tc.want)
 	}
 }
 
@@ -39,11 +38,9 @@ func TestIsCoverArtFile(t *testing.T) {
 		{"some_other_file.mp3", false},
 		{"some_other_file.flac", false},
 	}
-	for _, testcase := range testCases {
-		got := IsCoverArtFile(testcase.input)
-		if got != testcase.want {
-			t.Errorf("IsCoverArtFile(%q) = %v; want %v", testcase.input, got, testcase.want)
-		}
+	for _, tc := range testCases {
+		got := IsCoverArtFile(tc.input)
+		assert.Equal(t, tc.want, got, "IsCoverArtFile(%q) = %v; want %v", tc.input, got, tc.want)
 	}
 }
 
@@ -57,54 +54,36 @@ func TestIsValidMusicFile(t *testing.T) {
 		{"Crypta - Shades of Sorrow - 01 The Aftermath.mp3", true},  // Valid files
 		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", true},
 	}
-	for _, testcase := range testCases {
-		if IsValidMusicFile(testcase.input) != testcase.want {
-			t.Errorf("IsValidMusicFile(%q) = %v", testcase.input, !testcase.want)
-		}
+	for _, tc := range testCases {
+		got := IsValidMusicFile(tc.input)
+		assert.Equal(t, tc.want, got, "IsValidMusicFile(%q) = %v; want %v", tc.input, got, tc.want)
 	}
 }
 
 func TestCheckFileDirectory(t *testing.T) {
 	err := CheckFile("testdata/directory")
-	if err == nil {
-		t.Errorf("CheckFile on directory did not return error")
-	}
-	if strings.Contains(err.Error(), "is a directory") == false {
-		t.Errorf("CheckFile on directory returned wrong error: %v", err)
-	}
-
+	assert.Error(t, err, "CheckFile on directory did not return error")
+	assert.Contains(t, err.Error(), "is a directory", "CheckFile on directory returned wrong error: %v", err)
 }
 
 func TestCheckFileNonExistent(t *testing.T) {
 	err := CheckFile("testdata/nonexistent.zip")
-	if err == nil {
-		t.Errorf("CheckFile on nonexistent file did not return error")
-	}
-	if !strings.Contains(err.Error(), "no such file or directory") {
-		t.Errorf("CheckFile on nonexistent file returned wrong error: %v", err)
-	}
+	assert.Error(t, err, "CheckFile on nonexistent file did not return error")
+	assert.Contains(t, err.Error(), "no such file or directory", "CheckFile on nonexistent file returned wrong error: %v", err)
 }
 
 func TestCheckFileEmptyFile(t *testing.T) {
 	err := CheckFile("testdata/emptyfile")
-	if err == nil {
-		t.Errorf("CheckFile on empty file did not return error")
-	}
-	if !strings.Contains(err.Error(), "is empty") {
-		t.Errorf("CheckFile on empty file returned wrong error: %v", err)
-	}
+	assert.Error(t, err, "CheckFile on empty file did not return error")
+	assert.Contains(t, err.Error(), "is empty", "CheckFile on empty file returned wrong error: %v", err)
 }
 
 func TestCheckFileValidZipFile(t *testing.T) {
 	err := CheckFile("testdata/validfile.zip")
-	if err != nil {
-		t.Errorf("CheckFile on valid file returned error: %v", err)
-	}
+	assert.NoError(t, err, "CheckFile on valid zip file returned error: %v", err)
 }
 
 func TestCheckFileValidMusicFile(t *testing.T) {
 	err := CheckFile("testdata/ding.flac")
-	if err != nil {
-		t.Errorf("CheckFile on valid music file returned error: %v", err)
-	}
+	assert.NoError(t, err, "CheckFile on valid music file returned error: %v", err)
 }

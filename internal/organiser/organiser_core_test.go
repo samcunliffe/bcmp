@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/samcunliffe/bcmp/internal/bcmptest"
 	"github.com/samcunliffe/bcmp/internal/parser"
 	"github.com/stretchr/testify/assert"
 )
@@ -50,7 +51,7 @@ func TestCreateDestinationNonExistentBase(t *testing.T) {
 func TestTidy(t *testing.T) {
 	destination := t.TempDir()
 	source := "testdata/Artist - Album - 01 Track.flac"
-	defer putBackFile(source)
+	defer bcmptest.PutFileBack(t, source)
 
 	err := Tidy(source, destination)
 	assert.NoError(t, err, "Tidy(%q, %q) returned error: %v", source, destination, err)
@@ -61,24 +62,35 @@ func TestTidy(t *testing.T) {
 	}
 }
 
+// Walks through the directory and counts files and directories (assuming there should be zero).
+func AssertDirEmpty(t *testing.T, path string, msgAndArgs ...interface{}) {
+	t.Helper()
+	assert.DirExists(t, path)
+
+	count := -1 // exclude the root directory
+	err := filepath.WalkDir(path, func(path string, d os.DirEntry, err error) error {
+		count++
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+	assert.NoError(t, err)
+
+	assert.Zero(t, count, msgAndArgs...)
+}
+
 func TestMoveAndRenameDryRun(t *testing.T) {
-	destination := t.TempDir() // Should remain empty
 	source := "testdata/Artist - Album - 01 Track.flac"
-	// defer putBackFile(source)
+	destination := t.TempDir()
+	AssertDirEmpty(t, destination, "Setup failed: destination %q not empty", destination)
 
 	Config.DryRun = true
 	defer func() { Config.DryRun = false }()
 
 	err := moveAndRenameFile(source, destination)
-	if err != nil {
-		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
-	}
+	assert.NoError(t, err, "MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
+	AssertDirEmpty(t, destination, "MoveAndRenameFile in dry run mode modified destination %q", destination)
 
-	// _, err := os.EmptyDir(destination)
-	//     _, err = f.Readdirnames(1) // Or f.Readdir(1)
-
-	// wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
-	// if _, err := os.Stat(wantPath); os.IsNotExist(err) {
-	// 	t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
-	// }
+	// TODO: Figure out how to capture stdout. Seems not possible in testify.
 }

@@ -26,10 +26,10 @@ func PutFileBack(t *testing.T, path string) {
 func DirCount(path string) (int, error) {
 	count := -1 // exclude the root directory
 	err := filepath.WalkDir(path, func(path string, d os.DirEntry, err error) error {
-		count++
 		if err != nil {
 			return err
 		}
+		count++
 		return nil
 	})
 	return count, err

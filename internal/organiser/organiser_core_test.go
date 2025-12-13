@@ -107,7 +107,7 @@ func TestMoveAndRenameDryRun(t *testing.T) {
 
 	err := moveAndRenameFile(source, destination)
 	assert.NoError(t, err, "moveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
-	bcmptest.AssertDirEmpty(t, destination, "MoveAndRenameFile in dry run mode modified destination %q", destination)
+	bcmptest.AssertDirEmpty(t, destination, "moveAndRenameFile in dry run mode modified destination %q", destination)
 
 	// TODO: Figure out how to capture stdout. Seems not possible in testify.
 }

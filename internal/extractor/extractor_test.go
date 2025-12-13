@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/samcunliffe/bcmp/internal/bcmptest"
+	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,6 +30,21 @@ func TestExtract(t *testing.T) {
 		wantPath := filepath.Join(wantDestination, wantFile)
 		assert.FileExists(t, wantPath, "Expected file %s does not exist after extraction", wantPath)
 	}
+}
+
+func TestExtractDryRun(t *testing.T) {
+	destination := t.TempDir()
+	bcmptest.AssertDirEmpty(t, destination, "Setup failed: destination %q not empty", destination)
+	testfile := "testdata/Artist - Album.zip"
+
+	organiser.Config.DryRun = true
+	defer func() { organiser.Config.DryRun = false }()
+
+	err := Extract(testfile, destination)
+	assert.NoError(t, err, "Extract(%q, %q) in dry run mode returned error: %v", testfile, destination, err)
+
+	// Check that no files were created
+	bcmptest.AssertDirEmpty(t, destination, "Extract in dry run mode modified destination %q", destination)
 }
 
 func TestEmptyArchive(t *testing.T) {

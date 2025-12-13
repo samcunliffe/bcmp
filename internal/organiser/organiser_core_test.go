@@ -62,35 +62,17 @@ func TestTidy(t *testing.T) {
 	}
 }
 
-// Walks through the directory and counts files and directories (assuming there should be zero).
-func AssertDirEmpty(t *testing.T, path string, msgAndArgs ...interface{}) {
-	t.Helper()
-	assert.DirExists(t, path)
-
-	count := -1 // exclude the root directory
-	err := filepath.WalkDir(path, func(path string, d os.DirEntry, err error) error {
-		count++
-		if err != nil {
-			return err
-		}
-		return nil
-	})
-	assert.NoError(t, err)
-
-	assert.Zero(t, count, msgAndArgs...)
-}
-
 func TestMoveAndRenameDryRun(t *testing.T) {
 	source := "testdata/Artist - Album - 01 Track.flac"
 	destination := t.TempDir()
-	AssertDirEmpty(t, destination, "Setup failed: destination %q not empty", destination)
+	bcmptest.AssertDirEmpty(t, destination, "Setup failed: destination %q not empty", destination)
 
 	Config.DryRun = true
 	defer func() { Config.DryRun = false }()
 
 	err := moveAndRenameFile(source, destination)
 	assert.NoError(t, err, "MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
-	AssertDirEmpty(t, destination, "MoveAndRenameFile in dry run mode modified destination %q", destination)
+	bcmptest.AssertDirEmpty(t, destination, "MoveAndRenameFile in dry run mode modified destination %q", destination)
 
 	// TODO: Figure out how to capture stdout. Seems not possible in testify.
 }

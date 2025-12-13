@@ -49,6 +49,11 @@ func processTrack(f *zip.File, destination string) error {
 		return fmt.Errorf("error parsing music file name %s: %v", f.Name, err)
 	}
 
+	if o.Config.DryRun {
+		fmt.Printf("[Dry run] Extract track → %s\n", o.TrackDestination(track, destination))
+		return nil
+	}
+
 	// Actually extract and write the file
 	fd, err := os.Create(o.TrackDestination(track, destination))
 	if err != nil {

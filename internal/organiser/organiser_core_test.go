@@ -96,3 +96,18 @@ func TestTidyNonMusicFile(t *testing.T) {
 	err := Tidy(source, destination)
 	assert.ErrorContains(t, err, "not a valid music file", "Tidy(%q, %q) didn't return a/the expected error", source, destination)
 }
+
+func TestMoveAndRenameDryRun(t *testing.T) {
+	source := "testdata/Artist - Album - 01 Track.flac"
+	destination := t.TempDir()
+	bcmptest.AssertDirEmpty(t, destination, "Setup failed: destination %q not empty", destination)
+
+	Config.DryRun = true
+	defer func() { Config.DryRun = false }()
+
+	err := moveAndRenameFile(source, destination)
+	assert.NoError(t, err, "moveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
+	bcmptest.AssertDirEmpty(t, destination, "moveAndRenameFile in dry run mode modified destination %q", destination)
+
+	// TODO: Figure out how to capture stdout. Seems not possible in testify.
+}

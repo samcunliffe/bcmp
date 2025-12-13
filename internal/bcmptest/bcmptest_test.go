@@ -45,3 +45,21 @@ func TestPutFileBackExistingFileNoPermission(t *testing.T) {
 
 	assert.Panics(t, func() { PutFileBack(t, path) })
 }
+
+func TestAssertDirEmpty(t *testing.T) {
+	emptyDir := t.TempDir()
+	AssertDirEmpty(t, emptyDir, "AssertDirEmpty failed on empty directory %q", emptyDir)
+}
+
+func TestDirCount(t *testing.T) {
+	nonEmptyDir := t.TempDir()
+	filePath := filepath.Join(nonEmptyDir, "file.txt")
+	f, err := os.Create(filePath)
+	assert.NoError(t, err, "Test setup error: failed to create file %q: %v", filePath, err)
+	f.Close()
+
+	count, err := DirCount(nonEmptyDir)
+	assert.NoError(t, err, "DirCount(%q) returned error: %v", nonEmptyDir, err)
+
+	assert.Equal(t, 1, count, "DirCount(%q) = %d; want %d", nonEmptyDir, count, 1)
+}

@@ -1,8 +1,8 @@
 package organiser
 
 import (
-	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/samcunliffe/bcmp/internal/bcmptest"
@@ -57,9 +57,44 @@ func TestTidy(t *testing.T) {
 	assert.NoError(t, err, "Tidy(%q, %q) returned error: %v", source, destination, err)
 
 	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
-	if _, err := os.Stat(wantPath); os.IsNotExist(err) {
-		t.Fatalf("MoveAndRenameFile did not create file at %q", wantPath)
+	assert.FileExists(t, wantPath, "Tidy did not move file to %q", wantPath)
+}
+
+func TestTidyNonExistentFile(t *testing.T) {
+	destination := "./"
+	source := "Non Existent Artist - Non Existent Album - 01 Track.flac"
+
+	err := Tidy(source, destination)
+	assert.Error(t, err, "Tidy(%q, %q) didn't return an error!", source, destination)
+
+	want := "no such file or directory"
+	if !strings.Contains(err.Error(), want) {
+		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
 	}
+}
+
+func TestTidyInvalidFilename(t *testing.T) {
+	destination := "./"
+	source := "testdata/Un-Parsable Filename.flac"
+	defer bcmptest.PutFileBack(t, source)
+
+	err := Tidy(source, destination)
+	if err == nil {
+		t.Fatalf("Tidy(%q, %q) didn't return an error!", source, destination)
+	}
+	want := "does not contain ' - '"
+	if !strings.Contains(err.Error(), want) {
+		t.Fatalf("Tidy(%q, %q) error = %q; want %q", source, destination, err.Error(), want)
+	}
+}
+
+func TestTidyNonMusicFile(t *testing.T) {
+	destination := "./"
+	source := "testdata/Not a Music File.txt"
+	defer bcmptest.PutFileBack(t, source)
+
+	err := Tidy(source, destination)
+	assert.ErrorContains(t, err, "not a valid music file", "Tidy(%q, %q) didn't return a/the expected error", source, destination)
 }
 
 func TestMoveAndRenameDryRun(t *testing.T) {

@@ -1,26 +1,27 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestExtractNumberPrefix(t *testing.T) {
 	var testCases = []struct {
-		input_track    string
-		want_number    int
-		want_trackname string
+		input      string
+		wantNumber int
+		wantName   string
 	}{
 		{"01 The Aftermath", 1, "The Aftermath"},
 		{"02 Dark Clouds", 2, "Dark Clouds"},
 		{"06 The Other Side of Anger", 6, "The Other Side of Anger"},
 		{"12 Lord of Ruins", 12, "Lord of Ruins"},
 	}
-	for _, testcase := range testCases {
-		n, s, err := numberPrefix(testcase.input_track)
-		if err != nil {
-			t.Errorf("extractNumberPrefix returned error for %q: %v", testcase.input_track, err)
-		}
-		if n != testcase.want_number || s != testcase.want_trackname {
-			t.Errorf("extractNumberPrefix failed for %q: got (%d, %q), want (%d, %q)", testcase.input_track, n, s, testcase.want_number, testcase.want_trackname)
-		}
+	for _, tc := range testCases {
+		n, s, err := numberPrefix(tc.input)
+		assert.NoError(t, err, "extractNumberPrefix(%q) returned error: %v", tc.input, err)
+		assert.Equal(t, tc.wantNumber, n)
+		assert.Equal(t, tc.wantName, s)
 	}
 }
 
@@ -41,35 +42,26 @@ func TestParseMusicFileName(t *testing.T) {
 	}
 	wantArtist := "Crypta"
 	wantAlbum := "Shades of Sorrow"
-	for _, testcase := range testCases {
+	for _, tc := range testCases {
+		t.Run(tc.inputFilename, func(t *testing.T) {
 
-		// if we're also testing the title case flag
-		if testcase.titleCaseCfg {
-			Config.TitleCase = true
-		}
-		gotAlbum, gotTrack, err := ParseMusicFileName(testcase.inputFilename)
-		Config.TitleCase = false // reset after test execution
-		if err != nil {
-			t.Errorf("ParseMusicFileName(%q) returned error: %v", testcase.inputFilename, err)
-		}
-		if gotAlbum.Artist != wantArtist {
-			t.Errorf("ParseMusicFileName(%q) Artist = %q; want %q", testcase.inputFilename, gotAlbum.Artist, wantArtist)
-		}
-		if gotAlbum.Title != wantAlbum {
-			t.Errorf("ParseMusicFileName(%q) Album Title = %q; want %q", testcase.inputFilename, gotAlbum.Title, wantAlbum)
-		}
-		if gotTrack.Number != testcase.wantNumber {
-			t.Errorf("ParseMusicFileName(%q) Number = %d; want %d", testcase.inputFilename, gotTrack.Number, testcase.wantNumber)
-		}
-		if gotTrack.Title != testcase.wantTitle {
-			t.Errorf("ParseMusicFileName(%q) Title = %q; want %q", testcase.inputFilename, gotTrack.Title, testcase.wantTitle)
-		}
-		if gotTrack.FullTrack != testcase.wantTrack {
-			t.Errorf("ParseMusicFileName(%q) FullTrack = %q; want %q", testcase.inputFilename, gotTrack.FullTrack, testcase.wantTrack)
-		}
-		if gotTrack.FileType != testcase.wantSuffix {
-			t.Errorf("ParseMusicFileName(%q) FileType = %q; want %q", testcase.inputFilename, gotTrack.FileType, testcase.wantSuffix)
-		}
+			// if we're also testing the title case flag
+			if tc.titleCaseCfg {
+				Config.TitleCase = true
+				defer func() { Config.TitleCase = false }()
+			}
+
+			// Do the parsing
+			gotAlbum, gotTrack, err := ParseMusicFileName(tc.inputFilename)
+			assert.NoError(t, err, "ParseMusicFileName(%q) returned error: %v", tc.inputFilename, err)
+
+			assert.Equal(t, wantArtist, gotAlbum.Artist)
+			assert.Equal(t, wantAlbum, gotAlbum.Title)
+			assert.Equal(t, tc.wantNumber, gotTrack.Number)
+			assert.Equal(t, tc.wantTitle, gotTrack.Title)
+			assert.Equal(t, tc.wantTrack, gotTrack.FullTrack)
+			assert.Equal(t, tc.wantSuffix, gotTrack.FileType)
+		})
 	}
 }
 
@@ -84,8 +76,6 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 	}
 	for _, filename := range errorCases {
 		_, _, err := ParseMusicFileName(filename)
-		if err == nil {
-			t.Errorf("ParseMusicFileName(%q) expected to return error, but got nil", filename)
-		}
+		assert.Error(t, err, "ParseMusicFileName(%q) expected to return error", filename)
 	}
 }

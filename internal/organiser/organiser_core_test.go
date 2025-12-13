@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/samcunliffe/bcmp/internal/parser"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateDestination(t *testing.T) {
@@ -25,18 +26,11 @@ func TestCreateDestination(t *testing.T) {
 		},
 	}
 
-	for _, testcase := range testCases {
-		got, err := CreateDestination(testcase.album, base)
-		if err != nil {
-			t.Errorf("CreateDestination(%v, %q) returned error: %v", testcase.album, base, err)
-			continue
-		}
-		if got != testcase.want {
-			t.Errorf("CreateDestination(%v, %q) = %q; want %q", testcase.album, base, got, testcase.want)
-		}
-		if _, err := os.Stat(got); os.IsNotExist(err) {
-			t.Errorf("CreateDestination did not create directory %q", got)
-		}
+	for _, tc := range testCases {
+		got, err := CreateDestination(tc.album, base)
+		assert.NoError(t, err, "CreateDestination(%v, %q) returned error: %v", tc.album, base, err)
+		assert.Equal(t, tc.want, got, "CreateDestination(%v, %q) = %q; want %q", tc.album, base, got, tc.want)
+		assert.DirExists(t, got, "CreateDestination did not create directory %q", got)
 	}
 }
 
@@ -45,35 +39,21 @@ func TestCreateDestinationNonExistentBase(t *testing.T) {
 
 	album := parser.Album{Artist: "Crypta", Title: "Shades of Sorrow"}
 	got, err := CreateDestination(album, base)
-	if err != nil {
-		t.Errorf("CreateDestination(%v, %q) returned error: %v", album, base, err)
-	}
+	assert.NoError(t, err, "CreateDestination(%v, %q) returned error: %v", album, base, err)
+
 	want := filepath.Join(base, "Crypta", "Shades of Sorrow")
-	if got != want {
-		t.Errorf("CreateDestination(%v, %q) = %q; want %q", album, base, got, want)
-	}
+	assert.Equal(t, want, got, "CreateDestination(%v, %q) = %q; want %q", album, base, got, want)
 	// TODO: Might actually be better to do something else than write a warning to stdout...
 	// Investigate logging and a -v/--verbose flag?
 }
 
-// Utility test helper to recreate a moved file after testing is done.
-func putBackFile(path string) {
-	f, err := os.Create(path)
-	if err != nil {
-		panic("unable to put back file in testdata: " + err.Error())
-	}
-	f.Close()
-}
-
-func TestMoveAndRename(t *testing.T) {
+func TestTidy(t *testing.T) {
 	destination := t.TempDir()
 	source := "testdata/Artist - Album - 01 Track.flac"
 	defer putBackFile(source)
 
-	err := moveAndRenameFile(source, destination)
-	if err != nil {
-		t.Fatalf("MoveAndRenameFile(%q, %q) returned error: %v", source, destination, err)
-	}
+	err := Tidy(source, destination)
+	assert.NoError(t, err, "Tidy(%q, %q) returned error: %v", source, destination, err)
 
 	wantPath := filepath.Join(destination, "Artist", "Album", "01 Track.flac")
 	if _, err := os.Stat(wantPath); os.IsNotExist(err) {

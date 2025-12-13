@@ -9,6 +9,7 @@ import (
 	p "github.com/samcunliffe/bcmp/internal/parser"
 )
 
+// Config holds package-level configuration for the organiser.
 var Config = struct {
 	DryRun bool
 }{}

@@ -68,7 +68,7 @@ func TestExtractErrors(t *testing.T) {
 
 	for _, tc := range testCases {
 		err := Extract(tc.testfile, "./")
-		assert.ErrorContains(t, err, tc.wantContains, "Expected error '%s', got: %v", tc.wantContains, err)
+		assert.ErrorContains(t, err, tc.wantContains, "Expected error to mention '%s', got: %v", tc.wantContains, err)
 	}
 }
 

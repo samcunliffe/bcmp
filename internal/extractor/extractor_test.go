@@ -132,5 +132,5 @@ func TestArchiveWithUnParsableFileName(t *testing.T) {
 
 	err := unzipAndRename(testfile, destination)
 	assert.ErrorContains(t, err, "error parsing music file name",
-		"Expected error about unparsable filename, got: %v", err.Error())
+		"Expected error about unparsable filename, got: %v", err)
 }

@@ -124,7 +124,7 @@ func TestArchiveWithZipSlip(t *testing.T) {
 		"Expected error about invalid file path, got: %v", err.Error())
 }
 
-func TestArchiveWithUnParsableFileName(t *testing.T) {
+func TestArchiveWithUnparsableFileName(t *testing.T) {
 	destination := t.TempDir()
 
 	// Archive contains file: 'Artist - Album - Track One.flac'

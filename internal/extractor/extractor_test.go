@@ -47,6 +47,31 @@ func TestExtractDryRun(t *testing.T) {
 	bcmptest.AssertDirEmpty(t, destination, "Extract in dry run mode modified destination %q", destination)
 }
 
+func TestExtractErrors(t *testing.T) {
+	testCases := []struct {
+		wantContains string
+		testfile     string
+	}{
+		{
+			wantContains: "no such file or directory",
+			testfile:     "testdata/Artist - Album That Doesnt Exist.zip",
+		},
+		{
+			wantContains: "not a zip archive",
+			testfile:     "testdata/Artist - Album.txt",
+		},
+		{
+			wantContains: "expected only one ' - ' separator",
+			testfile:     "testdata/Artist - Album - WhatIsThis.zip",
+		},
+	}
+
+	for _, tc := range testCases {
+		err := Extract(tc.testfile, "./")
+		assert.ErrorContains(t, err, tc.wantContains, "Expected error to mention '%s', got: %v", tc.wantContains, err)
+	}
+}
+
 func TestEmptyArchive(t *testing.T) {
 	destination := t.TempDir()
 	testfile := "testdata/empty.zip"
@@ -97,4 +122,15 @@ func TestArchiveWithZipSlip(t *testing.T) {
 	err := unzipAndRename(testfile, destination)
 	assert.ErrorContains(t, err, "invalid file path",
 		"Expected error about invalid file path, got: %v", err.Error())
+}
+
+func TestArchiveWithUnparsableFileName(t *testing.T) {
+	destination := t.TempDir()
+
+	// Archive contains file: 'Artist - Album - Track One.flac'
+	testfile := "testdata/unparsable-filename.zip"
+
+	err := unzipAndRename(testfile, destination)
+	assert.ErrorContains(t, err, "error parsing music file name",
+		"Expected error about unparsable filename, got: %v", err)
 }

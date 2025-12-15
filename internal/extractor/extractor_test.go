@@ -60,6 +60,10 @@ func TestExtractErrors(t *testing.T) {
 			wantContains: "not a zip archive",
 			testfile:     "testdata/Artist - Album.txt",
 		},
+		{
+			wantContains: "expected only one ' - ' separator",
+			testfile:     "testdata/Artist - Album - WhatIsThis.zip",
+		},
 	}
 
 	for _, tc := range testCases {

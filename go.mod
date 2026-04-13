@@ -1,13 +1,11 @@
 module github.com/samcunliffe/bcmp
 
-go 1.24.0
-
-toolchain go1.24.2
+go 1.25.0
 
 require (
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/text v0.33.0
+	golang.org/x/text v0.35.0
 )
 
 require (

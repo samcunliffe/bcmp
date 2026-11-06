@@ -27,7 +27,6 @@ func TestExtension(t *testing.T) {
 func TestParserConfig(t *testing.T) {
 	// Defaults should be false
 	assert.False(t, Config.TitleCase, "Expected default TitleCase to be false, got %v", Config.TitleCase)
-	assert.False(t, Config.Debug, "Expected default Debug to be false, got %v", Config.Debug)
 
 	// Sanity check that we can set a value
 	Config.TitleCase = true

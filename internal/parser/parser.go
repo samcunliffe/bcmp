@@ -13,7 +13,6 @@ import (
 
 var Config = struct {
 	TitleCase bool
-	Debug     bool
 }{}
 
 type Album struct {

@@ -39,6 +39,7 @@ func TestParseMusicFileName(t *testing.T) {
 		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", false, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
 		{"crypta - shades of sorrow - 06 the other side of anger.flac", true, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".flac"},
 		{"CRYPTA - SHADES OF SORROW - 12 LORD OF RUINS.MP3", true, 12, "Lord of Ruins", "12 Lord of Ruins", ".mp3"},
+		{"Crypta - A Portrait of Decay.flac", false, 0, "A Portrait of Decay", "A Portrait of Decay", ".flac"},
 	}
 	wantArtist := "Crypta"
 	wantAlbum := "Shades of Sorrow"

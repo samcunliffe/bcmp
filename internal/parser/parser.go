@@ -117,17 +117,22 @@ func ParseZipFileName(name string) (Album, error) {
 func ParseMusicFileName(name string) (Album, Track, error) {
 	name, fileType := splitNameAndExtension(name)
 
-	// Should be two hyphens 'Artist - Album - XX Title'
-	if !strings.Contains(name, " - ") {
+	// Should be one or two hyphens either a single: 'Artist - Title' or an album track: 'Artist - Album - XX Title'
+	nSeparators := strings.Count(name, " - ")
+	if nSeparators < 1 {
 		return Album{}, Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
-	if strings.Count(name, " - ") != 2 {
-		return Album{}, Track{}, fmt.Errorf("expected two ' - ' separators: '%s'", name)
+	if nSeparators != 1 && nSeparators != 2 {
+		return Album{}, Track{}, fmt.Errorf("expected one or two ' - ' separators: '%s'", name)
 	}
 
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
+	if nSeparators == 1 {
+		// If there's only one hyphen, then the album title is the same as the track title
+		albumTitle = fullTrack
+	}
 
 	// Convert to title case if configured
 	if Config.TitleCase {
@@ -139,8 +144,13 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
 	number, songTitle, err := numberPrefix(fullTrack)
-	if err != nil {
+	if err != nil && nSeparators == 2 {
 		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+	}
+	if err != nil && nSeparators == 1 {
+		// If there's only one hyphen, then the track title is the same as the album title
+		songTitle = fullTrack
+		number = 0
 	}
 
 	track := Track{

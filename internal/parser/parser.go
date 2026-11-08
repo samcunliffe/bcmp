@@ -43,7 +43,6 @@ func Extension(s string) string {
 
 func toTitleCase(s string) string {
 	smallWords := " a an and as at but by for from if in nor of on or the to von vs "
-	romanNumerals := " I II III IV V VI VII VIII IX X "
 	words := strings.Split(s, " ")
 
 	// The first word in the string might be a track number:
@@ -59,7 +58,7 @@ func toTitleCase(s string) string {
 		if i > firstWord && strings.Contains(smallWords, lowerPaddedWord) {
 			// If the word is a 'small' word that doesn't start the title, make it lower case
 			words[i] = strings.ToLower(word)
-		} else if strings.Contains(romanNumerals, strings.ToUpper(lowerPaddedWord)) {
+		} else if isRomanNumeral(word) {
 			// If the word is a roman numeral, make it upper case
 			words[i] = strings.ToUpper(word)
 		} else {

@@ -49,6 +49,7 @@ func TestToTitleCase(t *testing.T) {
 		{"BABYMETAL - メギツネ", "Babymetal - メギツネ"},                     // Katakana
 		{"BABYMETAL - SONG 4 (4の歌)", "Babymetal - Song 4 (4の歌)"},     // Hiragana and Kanji
 		{"06 THE OTHER SIDE OF ANGER", "06 The Other Side of Anger"}, // Leading track number and beginning with a 'small' word
+		{"AMENRA - MASS IV", "Amenra - Mass IV"},                     // Roman numerals
 	}
 	for _, tc := range testCases {
 		got := toTitleCase(tc.input)

@@ -21,11 +21,15 @@ func TestIsRomanNumeral(t *testing.T) {
 		{"VIII", true},
 		{"IX", true},
 		{"X", true},
-		{"MCMXCIX", true},
-		{"MM", true},
+		{"MCMXCIX", true}, // 1999
+		{"MM", true},      // 2000
+		{"CMXLIX", true},  // 949
+		{"CDXC", true},    // 490
 		// --
-		{"SS", false},
+		{"", false},
+		{"SSS", false},
 		{"SAM", false},
+		{"A", false},
 		{"B", false},
 	}
 	for _, tc := range testCases {

@@ -41,6 +41,11 @@ func Extension(s string) string {
 	return ext
 }
 
+func isRomanNumeral(s string) bool {
+	pattern := regexp.MustCompile(`^M*(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`)
+	return s != "" && pattern.MatchString(s)
+}
+
 func toTitleCase(s string) string {
 	smallWords := " a an and as at but by for from if in nor of on or the to von vs "
 	words := strings.Split(s, " ")

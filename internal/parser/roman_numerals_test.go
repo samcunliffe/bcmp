@@ -25,6 +25,16 @@ func TestIsRomanNumeral(t *testing.T) {
 		{"MM", true},      // 2000
 		{"CMXLIX", true},  // 949
 		{"CDXC", true},    // 490
+		{"i", true},
+		{"ii", true},
+		{"iii", true},
+		{"iv", true},
+		{"v", true},
+		{"vi", true},
+		{"vii", true},
+		{"viii", true},
+		{"ix", true},
+		{"x", true},
 		// --
 		{"", false},
 		{"SSS", false},

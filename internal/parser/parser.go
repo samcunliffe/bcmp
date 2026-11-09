@@ -43,7 +43,7 @@ func Extension(s string) string {
 
 func isRomanNumeral(s string) bool {
 	pattern := regexp.MustCompile(`^M*(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`)
-	return s != "" && pattern.MatchString(s)
+	return s != "" && pattern.MatchString(strings.ToUpper(s))
 }
 
 func toTitleCase(s string) string {
@@ -59,13 +59,15 @@ func toTitleCase(s string) string {
 	}
 
 	for i, word := range words {
-		lowerPaddedWord := " " + strings.ToLower(word) + " "
-		if i > firstWord && strings.Contains(smallWords, lowerPaddedWord) {
+		lowerPadded := " " + strings.ToLower(word) + " "
+		if i > firstWord && strings.Contains(smallWords, lowerPadded) {
 			// If the word is a 'small' word that doesn't start the title, make it lower case
-			words[i] = strings.ToLower(word)
+			lower := strings.ToLower(word)
+			words[i] = lower
 		} else if isRomanNumeral(word) {
 			// If the word is a roman numeral, make it upper case
-			words[i] = strings.ToUpper(word)
+			upper := strings.ToUpper(word)
+			words[i] = upper
 		} else {
 			// Otherwise, capitalize the word
 			words[i] = cases.Title(language.English).String(word)

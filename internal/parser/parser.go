@@ -59,13 +59,14 @@ func toTitleCase(s string) string {
 	}
 
 	for i, word := range words {
-		lowerPaddedWord := " " + strings.ToLower(word) + " "
-		if i > firstWord && strings.Contains(smallWords, lowerPaddedWord) {
+		lowerPadded := " " + strings.ToLower(word) + " "
+		upper := strings.ToUpper(word)
+		if i > firstWord && strings.Contains(smallWords, lowerPadded) {
 			// If the word is a 'small' word that doesn't start the title, make it lower case
 			words[i] = strings.ToLower(word)
-		} else if isRomanNumeral(word) {
+		} else if isRomanNumeral(upper) {
 			// If the word is a roman numeral, make it upper case
-			words[i] = strings.ToUpper(word)
+			words[i] = upper
 		} else {
 			// Otherwise, capitalize the word
 			words[i] = cases.Title(language.English).String(word)

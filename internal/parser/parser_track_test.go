@@ -25,7 +25,7 @@ func TestExtractNumberPrefix(t *testing.T) {
 	}
 }
 
-func TestParseMusicFileName(t *testing.T) {
+func TestParseAlbumTrackFileName(t *testing.T) {
 	var testCases = []struct {
 		inputFilename string
 		titleCaseCfg  bool
@@ -39,7 +39,6 @@ func TestParseMusicFileName(t *testing.T) {
 		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", false, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
 		{"crypta - shades of sorrow - 06 the other side of anger.flac", true, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".flac"},
 		{"CRYPTA - SHADES OF SORROW - 12 LORD OF RUINS.MP3", true, 12, "Lord of Ruins", "12 Lord of Ruins", ".mp3"},
-		{"Crypta - A Portrait of Decay.flac", false, 0, "", "A Portrait of Decay", ".flac"},
 	}
 	wantArtist := "Crypta"
 	wantAlbum := "Shades of Sorrow"
@@ -61,6 +60,41 @@ func TestParseMusicFileName(t *testing.T) {
 			assert.Equal(t, tc.wantNumber, gotTrack.Number)
 			assert.Equal(t, tc.wantTitle, gotTrack.Title)
 			assert.Equal(t, tc.wantTrack, gotTrack.FullTrack)
+			assert.Equal(t, tc.wantSuffix, gotTrack.Extension)
+		})
+	}
+}
+
+func TestParseSingleTrackFileName(t *testing.T) {
+	var testCases = []struct {
+		inputFilename string
+		titleCaseCfg  bool
+		wantTitle     string
+		wantSuffix    string
+	}{
+		{"Crypta - A Portrait of Decay.flac", false, "A Portrait of Decay", ".flac"},
+		{"crypta - a portrait of decay.mp3", true, "A Portrait of Decay", ".mp3"},
+	}
+	wantArtist := "Crypta"
+
+	for _, tc := range testCases {
+		t.Run(tc.inputFilename, func(t *testing.T) {
+
+			// if we're also testing the title case flag
+			if tc.titleCaseCfg {
+				Config.ApplyTitleCase = true
+				defer func() { Config.ApplyTitleCase = false }()
+			}
+
+			// Do the parsing
+			gotAlbum, gotTrack, err := ParseMusicFileName(tc.inputFilename)
+			assert.NoError(t, err, "ParseMusicFileName(%q) returned error: %v", tc.inputFilename, err)
+
+			assert.Equal(t, wantArtist, gotAlbum.Artist)
+			assert.Equal(t, "", gotAlbum.Title)
+			assert.Equal(t, 0, gotTrack.Number)
+			assert.Equal(t, tc.wantTitle, gotTrack.Title)
+			assert.Equal(t, tc.wantTitle, gotTrack.FullTrack)
 			assert.Equal(t, tc.wantSuffix, gotTrack.Extension)
 		})
 	}

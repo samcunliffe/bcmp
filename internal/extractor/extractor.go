@@ -12,39 +12,39 @@ import (
 	p "github.com/samcunliffe/bcmp/internal/parser"
 )
 
-type FileType uint8
+type FileKind uint8
 
 const (
-	UnknownFile FileType = iota
-	MusicFile
-	CoverArtFile
+	Unknown FileKind = iota
+	Music
+	CoverArt
 )
 
 // Performs safety checks on the zip file entry.
-// If the file is a valid music file, returns false with no error.
-// If it is a valid cover art file, returns true with no error.
-func check(f *zip.File) (FileType, error) {
+// If the file is a valid music file it returns Music with no error.
+// If it is a valid cover art file it returns CoverArt with no error.
+func check(f *zip.File) (FileKind, error) {
 	// Check that the file path is not suspicious - in any case we will extract
 	// it to the music directory and forget the path. But if we detect this then
 	// stop processing as the zip file should be treated with caution.
 	//
 	// https://security.snyk.io/research/zip-slip-vulnerability
 	if !filepath.IsLocal(f.Name) {
-		return UnknownFile, fmt.Errorf("archive contains invalid file path: %s,\ntreat the zip file with caution", f.Name)
+		return Unknown, fmt.Errorf("archive contains invalid file path: %s,\ntreat the zip file with caution", f.Name)
 	}
 
 	// Any directories - this is likely not a bandcamp file
 	if f.FileInfo().IsDir() {
-		return UnknownFile, fmt.Errorf("archive contains a directory, not a valid bandcamp zip")
+		return Unknown, fmt.Errorf("archive contains a directory, not a valid bandcamp zip")
 	}
 
 	switch {
 	case c.IsValidMusicFile(filepath.Base(f.Name)):
-		return MusicFile, nil
+		return Music, nil
 	case c.IsCoverArtFile(filepath.Base(f.Name)):
-		return CoverArtFile, nil
+		return CoverArt, nil
 	default:
-		return UnknownFile, fmt.Errorf("archive contains an unknown file type: %s", f.Name)
+		return Unknown, fmt.Errorf("archive contains an unknown file type: %s", f.Name)
 	}
 }
 
@@ -131,9 +131,9 @@ func unzipAndRename(zipPath, destination string) error {
 		}
 
 		switch ft {
-		case MusicFile:
+		case Music:
 			err = processTrack(f, destination)
-		case CoverArtFile:
+		case CoverArt:
 			err = processCover(f, destination)
 		}
 		if err != nil {

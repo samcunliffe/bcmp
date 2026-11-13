@@ -56,7 +56,8 @@ func TestDirCount(t *testing.T) {
 	filePath := filepath.Join(nonEmptyDir, "file.txt")
 	f, err := os.Create(filePath)
 	assert.NoError(t, err, "Test setup error: failed to create file %q: %v", filePath, err)
-	f.Close()
+	err = f.Close()
+	assert.NoError(t, err, "Test setup error: failed to close file %q: %v", filePath, err)
 
 	count, err := DirCount(nonEmptyDir)
 	assert.NoError(t, err, "DirCount(%q) returned error: %v", nonEmptyDir, err)

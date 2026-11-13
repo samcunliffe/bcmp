@@ -12,20 +12,19 @@ import (
 )
 
 var Config = struct {
-	TitleCase bool
+	ApplyTitleCase bool
 }{}
 
 type Album struct {
 	Artist string
 	Title  string
-	// Tracks []Track
 }
 
 type Track struct {
 	Number    int
 	Title     string
 	FullTrack string
-	FileType  string
+	Extension string
 }
 
 // Get the filename and its extension in lower case
@@ -119,7 +118,7 @@ func ParseZipFileName(name string) (Album, error) {
 		return Album{}, fmt.Errorf("expected only one ' - ' separator: '%s'", name)
 	}
 	artist, album := splitOnHyphen(name)
-	if Config.TitleCase {
+	if Config.ApplyTitleCase {
 		artist = toTitleCase(artist)
 		album = toTitleCase(album)
 	}
@@ -142,7 +141,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
 
 	// Convert to title case if configured
-	if Config.TitleCase {
+	if Config.ApplyTitleCase {
 		artist = toTitleCase(artist)
 		albumTitle = toTitleCase(albumTitle)
 		fullTrack = toTitleCase(fullTrack)
@@ -159,7 +158,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		Number:    number,
 		Title:     songTitle,
 		FullTrack: fullTrack,
-		FileType:  fileType,
+		Extension: fileType,
 	}
 
 	return album, track, nil

@@ -48,7 +48,7 @@ func CreateDestination(album p.Album, base string) (string, error) {
 // Assumes the directory structure is correct, i.e. that CreateDestination has
 // been called.
 func TrackDestination(t p.Track, destination string) string {
-	filename := fmt.Sprintf("%s%s", t.FullTrack, t.FileType)
+	filename := fmt.Sprintf("%s%s", t.FullTrack, t.Extension)
 	return filepath.Join(destination, filename)
 }
 

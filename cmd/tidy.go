@@ -13,7 +13,7 @@ var tidyCmd = &cobra.Command{
 	Aliases: []string{"t"},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Global config flags
-		parser.Config.TitleCase, _ = cmd.Flags().GetBool("title-case")
+		parser.Config.ApplyTitleCase, _ = cmd.Flags().GetBool("title-case")
 		organiser.Config.DryRun, _ = cmd.Flags().GetBool("dry-run")
 
 		// Actual source and destination paths

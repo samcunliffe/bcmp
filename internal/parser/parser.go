@@ -160,7 +160,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
 	}
 	if err != nil && nSeparators == 1 {
-		// If there's only one hyphen, then the track title is the same as the album title
+		// If there's only one hyphen, then the song title is the same as the full track title (there's not usually a track number for a single)
 		songTitle = fullTrack
 		number = 0
 	}

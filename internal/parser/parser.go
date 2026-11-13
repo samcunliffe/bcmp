@@ -126,7 +126,7 @@ func ParseZipFileName(name string) (Album, error) {
 }
 
 func ParseMusicFileName(name string) (Album, Track, error) {
-	name, fileType := splitNameAndExtension(name)
+	name, extension := splitNameAndExtension(name)
 
 	// Should be one or two hyphens either a single: 'Artist - Title' or an album track: 'Artist - Album - XX Title'
 	nSeparators := strings.Count(name, " - ")
@@ -175,7 +175,7 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		Number:    number,
 		Title:     songTitle,
 		FullTrack: fullTrack,
-		FileType:  fileType,
+		Extension: extension,
 	}
 
 	return album, track, nil

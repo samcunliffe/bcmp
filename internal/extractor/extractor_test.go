@@ -25,6 +25,7 @@ func TestExtract(t *testing.T) {
 		"01 First Track.flac",
 		"02 Second Track.flac",
 		"03 Third Track.flac",
+		"cover.jpg",
 	}
 	for _, wantFile := range wantFiles {
 		wantPath := filepath.Join(wantDestination, wantFile)

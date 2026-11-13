@@ -166,8 +166,12 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		// Try to extract the track number - if it fails something has gone
 		// wrong so return an error.
 		number, songTitle, err := numberPrefix(fullTrack)
-		if err != nil
-			return album, Track{Title: songTitle}, fmt.Errorf("failed to extract track number and title: %v", err)
+		if err != nil {
+			track := Track{
+				Number: number,
+				Title:  songTitle,
+			}
+			return album, track, fmt.Errorf("failed to extract track number and title: %v", err)
 		}
 	}
 

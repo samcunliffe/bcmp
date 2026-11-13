@@ -33,8 +33,8 @@ func TestParseZipFileName(t *testing.T) {
 		t.Run(tc.inputFilename, func(t *testing.T) {
 			// if we're also testing the title case flag
 			if tc.titleCaseCfg {
-				Config.TitleCase = true
-				defer func() { Config.TitleCase = false }()
+				Config.ApplyTitleCase = true
+				defer func() { Config.ApplyTitleCase = false }()
 			}
 			got, err := ParseZipFileName(tc.inputFilename)
 

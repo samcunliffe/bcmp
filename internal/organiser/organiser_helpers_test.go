@@ -31,7 +31,7 @@ func TestTrackDestination(t *testing.T) {
 		Number:    1,
 		Title:     "First Track",
 		FullTrack: "01 First Track",
-		FileType:  ".flac",
+		Extension: ".flac",
 	}
 	want := "01 First Track.flac"
 	got := TrackDestination(track, "./")
@@ -43,7 +43,7 @@ func TestTrackDestinationWeirdPaths(t *testing.T) {
 		Number:    1,
 		Title:     "First Track",
 		FullTrack: "01 First Track",
-		FileType:  ".flac",
+		Extension: ".flac",
 	}
 	testCases := []struct {
 		input string

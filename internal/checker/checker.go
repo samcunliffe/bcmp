@@ -9,7 +9,7 @@ import (
 )
 
 var coverArtFilenames = []string{"cover.jpg", "cover.png", "folder.jpg", "folder.png"}
-var validMusicFiles = []string{".flac", ".mp3", ".ogg"}
+var validMusicFileExtensions = []string{".flac", ".mp3", ".ogg"}
 
 // Is the file a zip archive?
 func IsZipFile(s string) bool {
@@ -31,8 +31,8 @@ func IsCoverArtFile(name string) bool {
 func IsValidMusicFile(name string) bool {
 	ext := p.Extension(name)
 
-	for _, fileType := range validMusicFiles {
-		if ext == fileType {
+	for _, validExt := range validMusicFileExtensions {
+		if ext == validExt {
 			return true
 		}
 	}

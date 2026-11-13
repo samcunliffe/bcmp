@@ -86,7 +86,7 @@ func TestInvalidArchive(t *testing.T) {
 	testfile := "testdata/one-file-no-music.zip"
 
 	err := unzipAndRename(testfile, destination)
-	assert.ErrorContains(t, err, "filename does not have a valid music file suffix",
+	assert.ErrorContains(t, err, "archive contains an unknown file type",
 		"Expected error for invalid archive, got: %v", err)
 }
 

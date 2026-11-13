@@ -1,0 +1,9 @@
+version: "2"
+
+linters:
+  exclusions:
+    rules:
+      - linters:
+        # Don't complain if we don't check the error returned by a defer statement
+          - errcheck
+        source: '^\s*defer\s'

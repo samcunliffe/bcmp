@@ -12,27 +12,40 @@ import (
 	p "github.com/samcunliffe/bcmp/internal/parser"
 )
 
+type FileKind uint8
+
+const (
+	Unknown FileKind = iota
+	Music
+	CoverArt
+)
+
 // Performs safety checks on the zip file entry.
-func check(f *zip.File) error {
+// If the file is a valid music file it returns Music with no error.
+// If it is a valid cover art file it returns CoverArt with no error.
+func check(f *zip.File) (FileKind, error) {
 	// Check that the file path is not suspicious - in any case we will extract
 	// it to the music directory and forget the path. But if we detect this then
 	// stop processing as the zip file should be treated with caution.
 	//
 	// https://security.snyk.io/research/zip-slip-vulnerability
 	if !filepath.IsLocal(f.Name) {
-		return fmt.Errorf("archive contains invalid file path: %s,\ntreat the zip file with caution", f.Name)
+		return Unknown, fmt.Errorf("archive contains invalid file path: %s,\ntreat the zip file with caution", f.Name)
 	}
 
 	// Any directories - this is likely not a bandcamp file
 	if f.FileInfo().IsDir() {
-		return fmt.Errorf("archive contains a directory, not a valid bandcamp zip")
+		return Unknown, fmt.Errorf("archive contains a directory, not a valid bandcamp zip")
 	}
 
-	if !c.IsValidMusicFile(filepath.Base(f.Name)) {
-		return fmt.Errorf("filename does not have a valid music file suffix: %s", f.Name)
+	switch {
+	case c.IsValidMusicFile(filepath.Base(f.Name)):
+		return Music, nil
+	case c.IsCoverArtFile(filepath.Base(f.Name)):
+		return CoverArt, nil
+	default:
+		return Unknown, fmt.Errorf("archive contains an unknown file type: %s", f.Name)
 	}
-
-	return nil
 }
 
 // Process a single track file from the zip archive.
@@ -70,6 +83,37 @@ func processTrack(f *zip.File, destination string) error {
 	return nil
 }
 
+// Process the cover art file from the zip archive.
+// Also assumes sanity checks have already been performed.
+func processCover(f *zip.File, destination string) error {
+	rc, err := f.Open()
+	if err != nil {
+		return fmt.Errorf("impossible to open file in archive: %s", err)
+	}
+	defer rc.Close()
+
+	fullDestination := filepath.Join(destination, filepath.Base(f.Name))
+	if o.Config.DryRun {
+		fmt.Printf("[Dry run] Extract cover art → %s\n", fullDestination)
+		return nil
+	}
+
+	// Actually extract and write the file
+	fd, err := os.Create(fullDestination)
+	if err != nil {
+		return fmt.Errorf("impossible to create destination file: %s", err)
+	}
+	defer fd.Close()
+
+	_, err = io.Copy(fd, rc)
+	if err != nil {
+		return fmt.Errorf("impossible to copy file contents to destination: %s", err)
+	}
+
+	fmt.Printf("Extracted cover art: %s\n", fullDestination)
+	return nil
+}
+
 func unzipAndRename(zipPath, destination string) error {
 	// Open zip archive for reading.
 	rc, err := zip.OpenReader(zipPath)
@@ -81,18 +125,17 @@ func unzipAndRename(zipPath, destination string) error {
 	// Iterate through the files in the archive,
 	for _, f := range rc.File {
 
-		// Ignore cover art for now
-		if c.IsCoverArtFile(filepath.Base(f.Name)) {
-			fmt.Printf("Skipping: %s\n", f.Name)
-			continue
-		}
-
-		// Preflight checks
-		if err := check(f); err != nil {
+		ft, err := check(f)
+		if err != nil {
 			return err
 		}
 
-		err := processTrack(f, destination)
+		switch ft {
+		case Music:
+			err = processTrack(f, destination)
+		case CoverArt:
+			err = processCover(f, destination)
+		}
 		if err != nil {
 			return err
 		}

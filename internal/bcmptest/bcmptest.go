@@ -19,7 +19,8 @@ func PutFileBack(t *testing.T, path string) {
 	}
 	defer f.Close()
 
-	f.WriteString("Just a non-empty test file.")
+	_, err = f.WriteString("Just a non-empty test file.")
+	assert.NoError(t, err, "PutFileBack failed to write to file %q: %v", path, err)
 }
 
 // Walks through the directory and counts files and directories.

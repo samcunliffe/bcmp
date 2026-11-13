@@ -44,6 +44,7 @@ func check(f *zip.File) (FileKind, error) {
 	case c.IsCoverArtFile(filepath.Base(f.Name)):
 		return CoverArt, nil
 	default:
+		// Might make sense to simply ignore unknown files, but for now: treat as an error.
 		return Unknown, fmt.Errorf("archive contains an unknown file type: %s", f.Name)
 	}
 }
@@ -125,12 +126,12 @@ func unzipAndRename(zipPath, destination string) error {
 	// Iterate through the files in the archive,
 	for _, f := range rc.File {
 
-		ft, err := check(f)
+		kind, err := check(f)
 		if err != nil {
 			return err
 		}
 
-		switch ft {
+		switch kind {
 		case Music:
 			err = processTrack(f, destination)
 		case CoverArt:

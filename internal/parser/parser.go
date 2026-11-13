@@ -142,8 +142,8 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
 	if nSeparators == 1 {
-		// If there's only one hyphen, then the album title is the same as the track title
-		albumTitle = fullTrack
+		// If there's only one hyphen, then the track is probably a single (without an album)
+		albumTitle = ""
 	}
 
 	// Convert to title case if configured

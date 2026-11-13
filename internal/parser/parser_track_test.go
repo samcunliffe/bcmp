@@ -48,8 +48,8 @@ func TestParseMusicFileName(t *testing.T) {
 
 			// if we're also testing the title case flag
 			if tc.titleCaseCfg {
-				Config.TitleCase = true
-				defer func() { Config.TitleCase = false }()
+				Config.ApplyTitleCase = true
+				defer func() { Config.ApplyTitleCase = false }()
 			}
 
 			// Do the parsing
@@ -61,7 +61,7 @@ func TestParseMusicFileName(t *testing.T) {
 			assert.Equal(t, tc.wantNumber, gotTrack.Number)
 			assert.Equal(t, tc.wantTitle, gotTrack.Title)
 			assert.Equal(t, tc.wantTrack, gotTrack.FullTrack)
-			assert.Equal(t, tc.wantSuffix, gotTrack.FileType)
+			assert.Equal(t, tc.wantSuffix, gotTrack.Extension)
 		})
 	}
 }

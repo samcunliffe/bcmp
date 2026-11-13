@@ -12,20 +12,19 @@ import (
 )
 
 var Config = struct {
-	TitleCase bool
+	ApplyTitleCase bool
 }{}
 
 type Album struct {
 	Artist string
 	Title  string
-	// Tracks []Track
 }
 
 type Track struct {
 	Number    int
 	Title     string
 	FullTrack string
-	FileType  string
+	Extension string
 }
 
 // Get the filename and its extension in lower case
@@ -119,7 +118,7 @@ func ParseZipFileName(name string) (Album, error) {
 		return Album{}, fmt.Errorf("expected only one ' - ' separator: '%s'", name)
 	}
 	artist, album := splitOnHyphen(name)
-	if Config.TitleCase {
+	if Config.ApplyTitleCase {
 		artist = toTitleCase(artist)
 		album = toTitleCase(album)
 	}
@@ -138,16 +137,18 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		return Album{}, Track{}, fmt.Errorf("expected one or two ' - ' separators: '%s'", name)
 	}
 
+	// Only one hyphen means it's probably a single (without an album)
+	isSingle := nSeparators == 1
+
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
-	if nSeparators == 1 {
-		// If there's only one hyphen, then the track is probably a single (without an album)
+	if isSingle {
 		albumTitle = ""
 	}
 
 	// Convert to title case if configured
-	if Config.TitleCase {
+	if Config.ApplyTitleCase {
 		artist = toTitleCase(artist)
 		albumTitle = toTitleCase(albumTitle)
 		fullTrack = toTitleCase(fullTrack)
@@ -155,14 +156,19 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
-	number, songTitle, err := numberPrefix(fullTrack)
-	if err != nil && nSeparators == 2 {
-		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
-	}
-	if err != nil && nSeparators == 1 {
-		// If there's only one hyphen, then the song title is the same as the full track title (there's not usually a track number for a single)
+	number, songTitle := 0, ""
+	if isSingle && !hasTrackNumber(fullTrack) {
+		// If there's only one hyphen, then the song title is the same as the
+		// full track title (there's not usually a track number for singles).
 		songTitle = fullTrack
 		number = 0
+	} else {
+		// Try to extract the track number - if it fails something has gone
+		// wrong so return an error.
+		number, songTitle, err := numberPrefix(fullTrack)
+		if err != nil
+			return album, Track{Title: songTitle}, fmt.Errorf("failed to extract track number and title: %v", err)
+		}
 	}
 
 	track := Track{

@@ -102,18 +102,19 @@ func TestParseSingleTrackFileName(t *testing.T) {
 
 func TestParseMusicFilenameErrors(t *testing.T) {
 	var errorCases = []string{
-		"Crypta - Shades of Sorrow - The Aftermath.flac",          // Missing track number (album track)
-		"Crypta - Shades of Sorrow - 00 The Aftermath.flac",       // Track zero
-		"Crypta - Shades of Sorrow - Track One The Aftermath.mp3", // Non-numeric track number
-		"Crypta Shades of Sorrow 01 The Aftermath.flac",           // No hyphens
-		" - 01 The Aftermath.flac",                                // Missing artist and album
-		"Just the Song Title.flac",                                // Missing artist, album, track number
-		"Crypta -  - 01 The Aftermath.flac",                       // Missing album title but not a single
-		"Crypta - 01.flac",                                        // Missing track title
-		"Crypta - Shades of Sorrow - 01.flac",                     // Missing track title (album track)
-		"Crypta - Shades of Sorrow - .flac",                       // Missing full track title
-		"Crypta - .flac",                                          // Just artist
-		"Crypta - Shades of Sorrow - 01 The Aftermath",            // Missing file extension
+		"Crypta - Shades of Sorrow - The Aftermath.flac",             // Missing track number (album track)
+		"Crypta - Shades of Sorrow - 00 The Aftermath.flac",          // Track zero
+		"Crypta - Shades of Sorrow - Track One The Aftermath.mp3",    // Non-numeric track number
+		"Crypta Shades of Sorrow 01 The Aftermath.flac",              // No hyphens
+		" - 01 The Aftermath.flac",                                   // Missing artist and album
+		"Just the Song Title.flac",                                   // Missing artist, album, track number
+		"Crypta -  - 01 The Aftermath.flac",                          // Missing album title but not a single
+		"Crypta - 01.flac",                                           // Missing track title
+		"Crypta - Shades of Sorrow - 01.flac",                        // Missing track title (album track)
+		"Crypta - Shades of Sorrow - .flac",                          // Missing full track title
+		"Crypta - .flac",                                             // Just artist
+		"Crypta - Shades of Sorrow - 01 The Aftermath",               // Missing file extension
+		"Crypta - Shades of Sorrow - 01 The Aftermath - Part 1.flac", // Too many hyphens
 	}
 	for _, filename := range errorCases {
 		t.Run(filename, func(t *testing.T) {

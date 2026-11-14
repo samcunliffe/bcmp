@@ -39,6 +39,10 @@ To organise a single file to the default location:
 ```sh
 bcmp tidy '/path/to/Downloads/Artist - Album - XX Song Title.flac'
 ```
+or
+```sh
+bcmp tidy '/path/to/Downloads/Artist - Single.flac'
+```
 
 To put files in some other location, use `-d,--destination`.
 

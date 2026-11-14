@@ -17,10 +17,11 @@ var rootCmd = &cobra.Command{
 	Use:   "bcmp",
 	Short: "Extract and organise Bandcamp music files.",
 	Example: `# Run and extract music to $HOME/Music:
-bcmp extract "/path/to/bandcamp/downloads/Artist - Album Name.zip"
+bcmp extract '/path/to/bandcamp/downloads/Artist - Album Name.zip'
 
 # Organise files to the music directory:
-bcmp tidy "Artist - Album Name - 01 Song Title.flac"
+bcmp tidy 'Artist - Album Name - 01 Song Title.flac'
+bcmp tidy 'Artist - Single Title.flac'
 
 # To put files in some other location, use -d,--destination.`,
 }

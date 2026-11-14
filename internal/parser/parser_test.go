@@ -91,14 +91,21 @@ func TestHasTrackNumber(t *testing.T) {
 		input string
 		want  bool
 	}{
-		{"01 Song Title", true},
+		{"01 Song Title", true}, // Normal track numbers
 		{"10 Another Song", true},
 		{"99 Last Song", true},
-		{"No Number Here", false},
+		{"No Number Here", false}, // No track number
+		{"01", true},              // Only track number, no title
+		{"0001", true},            // Track number with leading zeros
+		{"010", true},             // Track number with leading zeros
+		{"1", true},               // Single digit track number
 		{"", false},
+		{"Song Title First 01", false},
 	}
 	for _, tc := range testCases {
-		got := hasTrackNumber(tc.input)
-		assert.Equal(t, tc.want, got, "hasTrackNumber(%q) = %v; want %v", tc.input, got, tc.want)
+		t.Run(tc.input, func(t *testing.T) {
+			got := hasTrackNumber(tc.input)
+			assert.Equal(t, tc.want, got, "hasTrackNumber(%q) = %v; want %v", tc.input, got, tc.want)
+		})
 	}
 }

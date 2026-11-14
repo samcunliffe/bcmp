@@ -120,7 +120,7 @@ func numberPrefix(s string) (int, string, error) {
 
 // Check if the string has a track number prefix (e.g., '01 Track Name').
 func hasTrackNumber(s string) bool {
-	re := regexp.MustCompile(`^(\d+)\s+.*`)
+	re := regexp.MustCompile(`^\d+(\s+.*)?$`)
 	return re.MatchString(s)
 }
 

@@ -29,19 +29,20 @@ func TestParseAlbumTrackFileName(t *testing.T) {
 	var testCases = []struct {
 		inputFilename string
 		titleCaseCfg  bool
+		wantArtist    string
+		wantAlbum     string
 		wantNumber    int
 		wantTitle     string
 		wantTrack     string
 		wantSuffix    string
 	}{
-		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", false, 1, "The Aftermath", "01 The Aftermath", ".flac"},
-		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", false, 2, "Dark Clouds", "02 Dark Clouds", ".mp3"},
-		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", false, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
-		{"crypta - shades of sorrow - 06 the other side of anger.flac", true, 6, "The Other Side of Anger", "06 The Other Side of Anger", ".flac"},
-		{"CRYPTA - SHADES OF SORROW - 12 LORD OF RUINS.MP3", true, 12, "Lord of Ruins", "12 Lord of Ruins", ".mp3"},
+		{"Crypta - Shades of Sorrow - 01 The Aftermath.flac", false, "Crypta", "Shades of Sorrow", 1, "The Aftermath", "01 The Aftermath", ".flac"},
+		{"Crypta - Shades of Sorrow - 02 Dark Clouds.mp3", false, "Crypta", "Shades of Sorrow", 2, "Dark Clouds", "02 Dark Clouds", ".mp3"},
+		{"Crypta - Shades of Sorrow - 06 The Other Side of Anger.ogg", false, "Crypta", "Shades of Sorrow", 6, "The Other Side of Anger", "06 The Other Side of Anger", ".ogg"},
+		{"crypta - shades of sorrow - 06 the other side of anger.flac", true, "Crypta", "Shades of Sorrow", 6, "The Other Side of Anger", "06 The Other Side of Anger", ".flac"},
+		{"CRYPTA - SHADES OF SORROW - 12 LORD OF RUINS.MP3", true, "Crypta", "Shades of Sorrow", 12, "Lord of Ruins", "12 Lord of Ruins", ".mp3"},
+		{"Metallica - ...And Justice for All - 01 Blackened.flac", false, "Metallica", "...And Justice for All", 1, "Blackened", "01 Blackened", ".flac"},
 	}
-	wantArtist := "Crypta"
-	wantAlbum := "Shades of Sorrow"
 	for _, tc := range testCases {
 		t.Run(tc.inputFilename, func(t *testing.T) {
 
@@ -55,8 +56,8 @@ func TestParseAlbumTrackFileName(t *testing.T) {
 			gotAlbum, gotTrack, err := ParseMusicFileName(tc.inputFilename)
 			assert.NoError(t, err, "ParseMusicFileName(%q) returned error: %v", tc.inputFilename, err)
 
-			assert.Equal(t, wantArtist, gotAlbum.Artist)
-			assert.Equal(t, wantAlbum, gotAlbum.Title)
+			assert.Equal(t, tc.wantArtist, gotAlbum.Artist)
+			assert.Equal(t, tc.wantAlbum, gotAlbum.Title)
 			assert.Equal(t, tc.wantNumber, gotTrack.Number)
 			assert.Equal(t, tc.wantTitle, gotTrack.Title)
 			assert.Equal(t, tc.wantTrack, gotTrack.FullTrack)
@@ -122,6 +123,8 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Artist - Album - ..\\evil.flac",
 		"Artist - Album - 01 ../evil.flac",
 		"Artist - ../evil - 01 Song.flac",
+		".. - evil.flac",
+		"Artist - .. - evil.flac",
 		// Not malicious, but invalid characters for a file name
 		"Artist - Album - 01 Song/WithSlash.flac",
 		"Artist - Album - 01 Song\\WithBackslash.flac",

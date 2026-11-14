@@ -124,7 +124,8 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Artist - Album - 01 ../evil.flac",
 		"Artist - ../evil - 01 Song.flac",
 		".. - evil.flac",
-		"Artist - .. - evil.flac",
+		"Artist - .. - 01 evil.flac",
+		"Artist - Album - 01 ...flac",
 		// Not malicious, but invalid characters for a file name
 		"Artist - Album - 01 Song/WithSlash.flac",
 		"Artist - Album - 01 Song\\WithBackslash.flac",

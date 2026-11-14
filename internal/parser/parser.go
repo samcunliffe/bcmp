@@ -11,15 +11,20 @@ import (
 	"golang.org/x/text/language"
 )
 
+// Global configuration for the parser package.
 var Config = struct {
 	ApplyTitleCase bool
 }{}
 
+// Album represents an album of one or more tracks (including LP, single with B-side etc).
+// An empty title is allowed for singles (where there is no album title).
 type Album struct {
 	Artist string
 	Title  string
 }
 
+// Track represents one track in an album, including its number, title, and file extension.
+// A number of zero is allowed for singles (where there is no track number).
 type Track struct {
 	Number    int
 	Title     string
@@ -40,11 +45,14 @@ func Extension(s string) string {
 	return ext
 }
 
+// Is the string a valid Roman numeral?
 func isRomanNumeral(s string) bool {
 	pattern := regexp.MustCompile(`^M*(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$`)
 	return s != "" && pattern.MatchString(strings.ToUpper(s))
 }
 
+// Convert the string to title case with special handling for small words and Roman numerals.
+// Roman numerals are treated at a preference and are uppercase.
 func toTitleCase(s string) string {
 	smallWords := " a an and as at but by for from if in nor of on or the to von vs "
 	words := strings.Split(s, " ")
@@ -75,26 +83,32 @@ func toTitleCase(s string) string {
 	return strings.Join(words, " ")
 }
 
+// Split the string on the first hyphen, returning the two parts.
+// If there is no hyphen, the first part is empty and the second part is the whole string.
 func splitOnHyphen(s string) (string, string) {
 	ss := strings.SplitN(s, " - ", 2)
+	if len(ss) < 2 {
+		// can never be zero
+		return "", ss[0]
+	}
 	return ss[0], ss[1]
 }
 
+// Remove any text within parentheses from the string.
 func removeParenthesis(s string) string {
 	re := regexp.MustCompile(`\s*\(.*?\)`)
 	return strings.TrimSpace(re.ReplaceAllString(s, ""))
 }
 
+// Get the track number and title from the full track string '01 Track Name'.
 func numberPrefix(s string) (int, string, error) {
 	re := regexp.MustCompile(`^(\d+)\s*(.*)`)
 
-	// Expect "XX Track Name", "XX", "Track Name"
 	matches := re.FindStringSubmatch(s)
 	if len(matches) != 3 {
 		return -1, s, fmt.Errorf("error in regex match for track number extraction")
 	}
 
-	// Convert track number from string
 	number, err := strconv.Atoi(matches[1])
 	if err != nil || number < 1 {
 		return -1, s, fmt.Errorf("failed to convert track number '%s' to int: %v", matches[1], err)
@@ -102,11 +116,58 @@ func numberPrefix(s string) (int, string, error) {
 	return number, strings.TrimSpace(matches[2]), nil
 }
 
+// Check if the string has a track number prefix (e.g., '01 Track Name').
 func hasTrackNumber(s string) bool {
-	re := regexp.MustCompile(`^(\d+)\s+.*`)
+	re := regexp.MustCompile(`^\d+(\s+.*)?$`)
 	return re.MatchString(s)
 }
 
+var disallowedSubstrings = []string{"/", "../", "\\", "..\\"}
+var disallowedNames = []string{".", ".."}
+
+// Check the album and track for sanity, returning an error if any field is invalid.
+func check(album Album, track Track, isSingle bool) error {
+	if album.Artist == "" {
+		return fmt.Errorf("album artist is empty")
+	}
+	if track.FullTrack == "" || track.Title == "" {
+		return fmt.Errorf("track title is empty")
+	}
+	if track.Extension == "" {
+		return fmt.Errorf("track extension is empty")
+	}
+	if !isSingle && track.Number < 1 {
+		return fmt.Errorf("track number is invalid: %d", track.Number)
+	}
+	if album.Title == "" && !isSingle {
+		return fmt.Errorf("album title is empty")
+	}
+	for _, name := range disallowedNames {
+		if album.Artist == name {
+			return fmt.Errorf("album artist is illegal: %s", name)
+		}
+		if album.Title == name {
+			return fmt.Errorf("album title is illegal: %s", name)
+		}
+		if track.Title == name || track.FullTrack == name {
+			return fmt.Errorf("track title is illegal: %s", name)
+		}
+	}
+	for _, substring := range disallowedSubstrings {
+		if strings.Contains(album.Artist, substring) {
+			return fmt.Errorf("album artist contains illegal pattern: %s", substring)
+		}
+		if strings.Contains(album.Title, substring) {
+			return fmt.Errorf("album title contains illegal pattern: %s", substring)
+		}
+		if strings.Contains(track.Title, substring) || strings.Contains(track.FullTrack, substring) {
+			return fmt.Errorf("title contains illegal pattern: %s", substring)
+		}
+	}
+	return nil
+}
+
+// Parse the zip file name into an Album struct, returning an error if the name is invalid.
 func ParseZipFileName(name string) (Album, error) {
 	name, _ = splitNameAndExtension(name)
 
@@ -125,16 +186,22 @@ func ParseZipFileName(name string) (Album, error) {
 	return Album{Artist: artist, Title: removeParenthesis(album)}, nil
 }
 
+// Parse the music file name into an Album and Track struct, returning an error if the name is invalid.
 func ParseMusicFileName(name string) (Album, Track, error) {
 	name, extension := splitNameAndExtension(name)
 
-	// Should be two hyphens 'Artist - Album - XX Title'
-	if !strings.Contains(name, " - ") {
+	// Should be one or two hyphens either a single: 'Artist - Title' or an
+	// album track: 'Artist - Album - XX Title'
+	nSeparators := strings.Count(name, " - ")
+	if nSeparators < 1 {
 		return Album{}, Track{}, fmt.Errorf("filename does not contain ' - ' separator")
 	}
-	if strings.Count(name, " - ") != 2 {
-		return Album{}, Track{}, fmt.Errorf("expected two ' - ' separators: '%s'", name)
+	if nSeparators != 1 && nSeparators != 2 {
+		return Album{}, Track{}, fmt.Errorf("expected one or two ' - ' separators: '%s'", name)
 	}
+
+	// Only one hyphen means it's probably a single (without an album)
+	isSingle := nSeparators == 1
 
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
@@ -149,17 +216,30 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
-	number, songTitle, err := numberPrefix(fullTrack)
-	if err != nil {
-		return album, Track{Title: name}, fmt.Errorf("failed to extract track number and title: %v", err)
+	if isSingle && !hasTrackNumber(fullTrack) {
+		singleTrack := Track{
+			Number:    0,
+			Title:     fullTrack,
+			FullTrack: fullTrack,
+			Extension: extension,
+		}
+		err := check(album, singleTrack, isSingle)
+		return album, singleTrack, err
 	}
 
-	track := Track{
-		Number:    number,
+	// Try to extract the track trackNumber. We've dealt with the single case so if
+	// it fails something has gone wrong so return an error.
+	trackNumber, songTitle, err := numberPrefix(fullTrack)
+	if err != nil {
+		return album, Track{}, fmt.Errorf("failed to extract track number and title: %v", err)
+	}
+
+	albumTrack := Track{
+		Number:    trackNumber,
 		Title:     songTitle,
 		FullTrack: fullTrack,
 		Extension: extension,
 	}
-
-	return album, track, nil
+	err = check(album, albumTrack, isSingle)
+	return album, albumTrack, err
 }

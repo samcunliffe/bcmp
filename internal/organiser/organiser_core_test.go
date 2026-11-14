@@ -48,7 +48,7 @@ func TestCreateDestinationNonExistentBase(t *testing.T) {
 	// Investigate logging and a -v/--verbose flag?
 }
 
-func TestTidy(t *testing.T) {
+func TestTidyAlbumTrack(t *testing.T) {
 	destination := t.TempDir()
 	source := "testdata/Artist - Album - 01 Track.flac"
 	defer bcmptest.PutFileBack(t, source)
@@ -60,6 +60,17 @@ func TestTidy(t *testing.T) {
 	assert.FileExists(t, wantPath, "Tidy did not move file to %q", wantPath)
 }
 
+func TestTidySingle(t *testing.T) {
+	destination := t.TempDir()
+	source := "testdata/Artist - Single Track Without an Album.flac"
+	defer bcmptest.PutFileBack(t, source)
+
+	err := Tidy(source, destination)
+	assert.NoError(t, err, "Tidy(%q, %q) returned error: %v", source, destination, err)
+
+	wantPath := filepath.Join(destination, "Artist", "Single Track Without an Album.flac")
+	assert.FileExists(t, wantPath, "Tidy did not move file to %q", wantPath)
+}
 func TestTidyNonExistentFile(t *testing.T) {
 	destination := "./"
 	source := "Non Existent Artist - Non Existent Album - 01 Track.flac"

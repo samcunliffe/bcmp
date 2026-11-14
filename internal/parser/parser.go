@@ -129,11 +129,8 @@ func check(album Album, track Track, isSingle bool) error {
 	if album.Artist == "" {
 		return fmt.Errorf("album artist is empty")
 	}
-	if track.Title == "" {
+	if track.FullTrack == "" || track.Title == "" {
 		return fmt.Errorf("track title is empty")
-	}
-	if track.FullTrack == "" {
-		return fmt.Errorf("track full title is empty")
 	}
 	if track.Extension == "" {
 		return fmt.Errorf("track extension is empty")

@@ -145,8 +145,11 @@ func check(album Album, track Track, isSingle bool) error {
 		if strings.Contains(album.Artist, substring) {
 			return fmt.Errorf("album artist contains illegal pattern: %s", substring)
 		}
-		if strings.Contains(album.Title, substring) || strings.Contains(track.FullTrack, substring) {
+		if strings.Contains(album.Title, substring) {
 			return fmt.Errorf("album title contains illegal pattern: %s", substring)
+		}
+		if strings.Contains(track.Title, substring) || strings.Contains(track.FullTrack, substring) {
+			return fmt.Errorf("title contains illegal pattern: %s", substring)
 		}
 	}
 	return nil

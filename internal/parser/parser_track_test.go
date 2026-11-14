@@ -116,6 +116,18 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Crypta - .flac",                                             // Just artist
 		"Crypta - Shades of Sorrow - 01 The Aftermath",               // Missing file extension
 		"Crypta - Shades of Sorrow - 01 The Aftermath - Part 1.flac", // Too many hyphens
+		// Path traversal attempts
+		"Artist - ../evil.flac",
+		"Artist - Album - ../evil.flac",
+		"Artist - Album - ..\\evil.flac",
+		"Artist - Album - 01 ../evil.flac",
+		"Artist - ../evil - 01 Song.flac",
+		// Not malicious, but invalid characters for a file name
+		"Artist - Album - 01 Song/WithSlash.flac",
+		"Artist - Album - 01 Song\\WithBackslash.flac",
+		"Artist - Album - 01 Song/With/Multiple/Slashes.flac",
+		"Artist/Name/With/Slashes - Album - 01 Song.flac",
+		"Artist\\Name\\With\\Backslashes - Album - 01 Song.flac",
 	}
 	for _, filename := range errorCases {
 		t.Run(filename, func(t *testing.T) {

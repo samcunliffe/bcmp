@@ -122,6 +122,8 @@ func hasTrackNumber(s string) bool {
 	return re.MatchString(s)
 }
 
+var disallowedSubstrings = []string{"..", "/", "../", "\\", "..\\"}
+
 // Check the album and track for sanity, returning an error if any field is invalid.
 func check(album Album, track Track, isSingle bool) error {
 	if album.Artist == "" {
@@ -138,6 +140,14 @@ func check(album Album, track Track, isSingle bool) error {
 	}
 	if album.Title == "" && !isSingle {
 		return fmt.Errorf("album title is empty")
+	}
+	for _, substring := range disallowedSubstrings {
+		if strings.Contains(album.Artist, substring) {
+			return fmt.Errorf("album artist contains illegal pattern: %s", substring)
+		}
+		if strings.Contains(album.Title, substring) || strings.Contains(track.FullTrack, substring) {
+			return fmt.Errorf("album title contains illegal pattern: %s", substring)
+		}
 	}
 	return nil
 }

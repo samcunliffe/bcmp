@@ -170,11 +170,6 @@ func ParseZipFileName(name string) (Album, error) {
 func ParseMusicFileName(name string) (Album, Track, error) {
 	name, extension := splitNameAndExtension(name)
 
-	// Convert to title case if configured
-	if Config.ApplyTitleCase {
-		name = toTitleCase(name)
-	}
-
 	// Should be one or two hyphens either a single: 'Artist - Title' or an
 	// album track: 'Artist - Album - XX Title'
 	nSeparators := strings.Count(name, " - ")
@@ -191,6 +186,14 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 	// Split into artist, album, number, track title
 	artist, albumAndTrack := splitOnHyphen(name)
 	albumTitle, fullTrack := splitOnHyphen(albumAndTrack)
+
+	// Convert to title case if configured
+	if Config.ApplyTitleCase {
+		artist = toTitleCase(artist)
+		albumTitle = toTitleCase(albumTitle)
+		fullTrack = toTitleCase(fullTrack)
+	}
+
 	album := Album{Artist: artist, Title: removeParenthesis(albumTitle)}
 
 	if isSingle && !hasTrackNumber(fullTrack) {
@@ -200,8 +203,8 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 			FullTrack: fullTrack,
 			Extension: extension,
 		}
-		check(album, singleTrack, isSingle)
-		return album, singleTrack, nil
+		err := check(album, singleTrack, isSingle)
+		return album, singleTrack, err
 	}
 
 	// Try to extract the track trackNumber. We've dealt with the single case so if
@@ -217,6 +220,6 @@ func ParseMusicFileName(name string) (Album, Track, error) {
 		FullTrack: fullTrack,
 		Extension: extension,
 	}
-	check(album, albumTrack, isSingle)
-	return album, albumTrack, nil
+	err = check(album, albumTrack, isSingle)
+	return album, albumTrack, err
 }

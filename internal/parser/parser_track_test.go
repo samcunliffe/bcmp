@@ -110,7 +110,9 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 		"Just the Song Title.flac",                                // Missing artist, album, track number
 	}
 	for _, filename := range errorCases {
-		_, _, err := ParseMusicFileName(filename)
-		assert.Error(t, err, "ParseMusicFileName(%q) expected to return error", filename)
+		t.Run(filename, func(t *testing.T) {
+			_, _, err := ParseMusicFileName(filename)
+			assert.Error(t, err, "ParseMusicFileName(%q) expected to return error", filename)
+		})
 	}
 }

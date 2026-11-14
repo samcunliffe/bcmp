@@ -77,8 +77,14 @@ func moveAndRenameFile(sourcePath, destination string) error {
 		fmt.Printf("[Dry run] %s → %s\n", sourcePath, TrackDestination(track, destination))
 		return nil
 	}
+	fmt.Printf("\"%s\"\n", destination)
 
-	return os.Rename(sourcePath, TrackDestination(track, destination))
+	err = os.Rename(sourcePath, TrackDestination(track, destination))
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Moved track: %s\n", track.Title)
+	return nil
 }
 
 // Tidy checks a music file and moves it to the correct directory structure.

@@ -93,7 +93,8 @@ func processCover(f *zip.File, destination string) error {
 	}
 	defer rc.Close()
 
-	fullDestination := filepath.Join(destination, filepath.Base(f.Name))
+	name := filepath.Base(f.Name)
+	fullDestination := filepath.Join(destination, name)
 	if o.Config.DryRun {
 		fmt.Printf("[Dry run] Extract cover art → %s\n", fullDestination)
 		return nil
@@ -111,7 +112,7 @@ func processCover(f *zip.File, destination string) error {
 		return fmt.Errorf("impossible to copy file contents to destination: %s", err)
 	}
 
-	fmt.Printf("Extracted cover art: %s\n", fullDestination)
+	fmt.Printf("Extracted cover art: %s\n", name)
 	return nil
 }
 
@@ -163,6 +164,9 @@ func Extract(zipFilePath, destination string) error {
 	destination, err = o.CreateDestination(album, destination)
 	if err != nil {
 		return err
+	}
+	if !o.Config.DryRun {
+		fmt.Printf("\"%s\"\n", destination)
 	}
 
 	return unzipAndRename(zipFilePath, destination)

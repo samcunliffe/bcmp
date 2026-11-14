@@ -104,6 +104,7 @@ func TestParseMusicFilenameErrors(t *testing.T) {
 	var errorCases = []string{
 		"Crypta - Shades of Sorrow - The Aftermath.flac",             // Missing track number (album track)
 		"Crypta - Shades of Sorrow - 00 The Aftermath.flac",          // Track zero
+		"Crypta - Shades of Sorrow - -1 The Aftermath.flac",          // Negative track number
 		"Crypta - Shades of Sorrow - Track One The Aftermath.mp3",    // Non-numeric track number
 		"Crypta Shades of Sorrow 01 The Aftermath.flac",              // No hyphens
 		" - 01 The Aftermath.flac",                                   // Missing artist and album

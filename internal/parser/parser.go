@@ -87,10 +87,8 @@ func toTitleCase(s string) string {
 // If there is no hyphen, the first part is empty and the second part is the whole string.
 func splitOnHyphen(s string) (string, string) {
 	ss := strings.SplitN(s, " - ", 2)
-	switch len(ss) {
-	case 0:
-		return "", ""
-	case 1:
+	if len(ss) < 2 {
+		// can never be zero
 		return "", ss[0]
 	}
 	return ss[0], ss[1]

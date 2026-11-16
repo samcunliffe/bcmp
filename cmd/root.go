@@ -3,10 +3,12 @@ package cmd
 import (
 	"io"
 	"os"
+	"context"
 	"runtime/debug"
 
 	"github.com/samcunliffe/bcmp/internal/organiser"
 	"github.com/spf13/cobra"
+	"github.com/charmbracelet/fang"
 )
 
 // Own osExit function to allow monkey-patching in tests.
@@ -28,7 +30,7 @@ bcmp tidy 'Artist - Single Title.flac'
 
 // Run the root-level command.
 func Execute() {
-	err := rootCmd.Execute()
+	err := fang.Execute(context.Background(), rootCmd)
 	if err != nil {
 		osExit(1)
 	}
